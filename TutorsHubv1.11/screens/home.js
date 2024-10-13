@@ -2,17 +2,31 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
 
+// creates CourseCard component that displays course 'name' and 'image'
 const CourseCard = ({ name, image, onPress }) => {
   return (
-      <TouchableOpacity style={styles.card} onPress={onPress}>
+    // TouchableOpacity makes the entire component clickable
+      <TouchableOpacity style={styles.card} onPress={onPress}> 
         <Image source={image} style={styles.image} />
         <Text style={styles.courseText}>{name}</Text>
     </TouchableOpacity>
   )
 }
 
+// creates NewsCard component that displays course 'name' and 'image'
+const NewsCard = ({ name, image, onPress }) => {
+  return (
+      // TouchableOpacity makes the entire component clickable
+      <TouchableOpacity style={styles.newsCard} onPress={onPress}>
+        <Image source={image} style={styles.newsImage} />
+        <Text style={styles.newsText}>{name}</Text>
+    </TouchableOpacity>
+  )
+}
+
 export default function HomeScreen({ navigation }) {
 
+  // method handles where to navigate to depending on which component is clicked
   const handleCardPress = (course) => {
     if (course === "CS 262") {
       navigation.navigate("Cs262Screen");
@@ -23,6 +37,7 @@ export default function HomeScreen({ navigation }) {
     } else if (course === "MATH 252") {
       navigation.navigate("Math252Screen");
     }
+    // logs what was clicked if no method included in the if elses
     else {
       console.log('Pressed ' + course);
     }
@@ -30,8 +45,15 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+      {/* TH logo */}
+      <Image source = {require('../assets/logoBlack.png')} style = {styles.logoImage} />
+
+      <Text style={styles.userHeader}>Welcome, *username*!</Text> 
+
       <Text style={styles.header}>Offered Courses:</Text> 
       
+      {/* All of the currently offered CourseCards */}
       <View style={styles.cardsContainer}>
         <CourseCard
           name="CS 262"
@@ -54,6 +76,13 @@ export default function HomeScreen({ navigation }) {
           onPress={() => handleCardPress("MATH 252")}
         />
       </View>
+
+      {/* News/Announcements Card*/}
+      <NewsCard
+        name="News/Announcements"
+        image={require('../assets/NA.jpg')}
+        onPress={() => console.log("News button pressed.")}
+      />
     </View>
   );
 }
@@ -66,11 +95,21 @@ const styles = StyleSheet.create({
     backgroundColor: '#4b3ae0',
   },
   header: {
-    fontSize: 30,
-    fontWeight: 'bold',
+    fontSize: 27,
+    fontWeight: 'semibold',
     color: '#ffffff', 
     marginBottom: 10,
     marginLeft: 7,
+    paddingTop: 10,
+    textAlign: 'left',
+  },
+  userHeader: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: '#ffffff', 
+    marginBottom: -5,
+    marginLeft: 7,
+    paddingTop: 10,
     textAlign: 'left',
   },
   cardsContainer: {
@@ -86,9 +125,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
+  newsCard: {
+    backgroundColor: '#fff',
+    borderRadius: 15,
+    width: 415,
+    height: 375,
+    alignItems: 'center',
+    marginLeft: 7,
+    marginTop: 25,
+    paddingTop: 0,
+  },
   image: {
     width: '100%',
     height: 110,
+  },
+  newsImage: {
+    width: '100%',
+    height: 325,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+
+  },
+  logoImage: {
+    width: 100,
+    height: 80,
+    alignSelf: 'left',
+    marginLeft: 7,
   },
   courseText: {
     fontSize: 16,
@@ -96,5 +158,12 @@ const styles = StyleSheet.create({
     color: '#4b3ae0',
     textAlign: 'center',
     paddingTop: 5,
+  },
+  newsText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#4b3ae0',
+    textAlign: 'center',
+    paddingTop: 15,
   },
 });
