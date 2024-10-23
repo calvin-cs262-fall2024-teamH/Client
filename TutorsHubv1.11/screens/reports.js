@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, SectionList, StyleSheet } from 'react-native';
+import { View, Text, SectionList, StyleSheet,Image } from 'react-native';
 import SectionItem from '../components/SectionItem';
 import SectionHeader from '../components/SectionHeader';
 
@@ -27,7 +27,9 @@ const ReportsScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Reports</Text>
-      <View style={styles.line} /> 
+      <Image source = {require('../assets/logoBlack.png')} style = {styles.logoImage} />
+
+      <View style={styles.line} />
       <SectionList
         sections={DATA} // i do not understand that error , it works good
         keyExtractor={(item, index) => item.name + index}
@@ -55,11 +57,20 @@ const styles = StyleSheet.create({
   },
   line: {
     marginTop: 10,
-    height: 7, 
-    backgroundColor: '#4b3ae0', 
-    marginBottom: 10, 
+    height: 7,
+    backgroundColor: '#4b3ae0',
+    marginBottom: 10,
+  },
+  logoImage: {
+    width: 50,
+    height: 40,
+    alignSelf: 'left',
+    marginLeft: 7,
+    marginTop: -50,
   },
 
 });
 
 export default ReportsScreen;
+
+

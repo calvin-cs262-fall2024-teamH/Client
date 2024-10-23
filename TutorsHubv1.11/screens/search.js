@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, FlatList, StyleSheet } from 'react-native';
+import { View, Text, TextInput, FlatList, StyleSheet,Image } from 'react-native';
 
 function SearchScreen() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -17,7 +17,9 @@ function SearchScreen() {
 
   return (
 	<View style={styles.container}>
-	  <TextInput
+		<Image source = {require('../assets/logoBlack.png')} style = {styles.logoImage} />
+
+		<TextInput
 		style={styles.searchBar}
 		placeholder="Search courses..."
 		value={searchQuery}
@@ -37,27 +39,33 @@ function SearchScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-	flex: 1,
-	padding: 16,
-	backgroundColor: '#fff',
-  },
-  searchBar: {
-	height: 40,
-	borderColor: 'gray',
-	borderWidth: 1,
-	borderRadius: 8,
-	paddingHorizontal: 8,
-	marginBottom: 16,
-  },
-  resultItem: {
-	padding: 16,
-	borderBottomWidth: 1,
-	borderBottomColor: '#ccc',
-  },
-  resultText: {
-	fontSize: 18,
-  },
+	container: {
+		flex: 1,
+		padding: 16,
+		backgroundColor: '#fff',
+	},
+	searchBar: {
+		height: 40,
+		borderColor: 'gray',
+		borderWidth: 1,
+		borderRadius: 8,
+		paddingHorizontal: 8,
+		marginBottom: 16,
+	},
+	resultItem: {
+		padding: 16,
+		borderBottomWidth: 1,
+		borderBottomColor: '#ccc',
+	},
+	resultText: {
+		fontSize: 18,
+	},
+	logoImage: {
+		width: 50,
+		height: 40,
+		alignSelf: 'flex-start',
+		marginBottom: 10,
+	},
 });
 
 export default SearchScreen;
