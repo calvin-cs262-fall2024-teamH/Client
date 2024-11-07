@@ -61,12 +61,12 @@ const styles = StyleSheet.create({
 	},
 	logoContainer: {
 		position: 'absolute',
-		top: 16,
-		left: 16,
+		top: 10, // Adjusts distance from the top
+		left: 10, // Adjusts distance from the left
 	},
 	logoImage: {
-		width: 70, // Slightly bigger
-		height: 70, // Slightly bigger
+		width: 50,
+		height: 40,
 	},
 	title: {
 		fontSize: 24,
