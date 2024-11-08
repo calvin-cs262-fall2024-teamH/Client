@@ -1,35 +1,52 @@
-import React from 'react';
-import { View, Text, StyleSheet,Image} from 'react-native';
+// OptionsScreen.js
 
-function OptionsScreen() {
-  return (
-	<View style={styles.container}>
-		<Image source = {require('../assets/logoBlack.png')} style = {styles.logoImage} />
-		<Text style={styles.text}>Options Screen</Text>
-	</View>
+import React from 'react';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+
+const OptionsScreen = () => {
+  const renderOptionButton = (title) => (
+    <TouchableOpacity style={styles.optionButton} onPress={() => { /* Placeholder action */ }}>
+      <Text style={styles.optionText}>{title}</Text>
+    </TouchableOpacity>
   );
-}
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.headerText}>Options</Text>
+      {renderOptionButton("Account Settings")}
+      {renderOptionButton("Notification Settings")}
+      {renderOptionButton("Theme Settings")}
+      {renderOptionButton("Privacy and Security")}
+      {renderOptionButton("Help and Support")}
+      {renderOptionButton("About")}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		justifyContent: 'center',
-		alignItems: 'center',
-	},
-	text: {
-		fontSize: 24,
-		fontWeight: 'bold',
-	},
-	logoImage: {
-		width: 50,
-		height: 40,
-		position: 'absolute',
-		top: 0,
-		left: 0,
-		marginLeft: 7,
-		marginTop: 7,
-	},
-
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#fff',
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+    color: '#333',
+  },
+  optionButton: {
+    padding: 15,
+    borderRadius: 10,
+    backgroundColor: '#f0f0f0',
+    marginBottom: 10,
+    alignItems: 'center',
+  },
+  optionText: {
+    fontSize: 18,
+    color: '#555',
+  },
 });
 
 export default OptionsScreen;
