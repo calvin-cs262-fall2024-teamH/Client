@@ -19,6 +19,9 @@ import ReceiptScreen from './components/Receipt'; // Receipt screen component
 import SignIn from './screens/signin'; // Import the renamed screen
 import SignUp from './screens/SignUp'; // Import the new screen
 
+import FavoritesScreen from './screens/favoritescreen';
+
+
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
@@ -38,6 +41,8 @@ function App() {
 
         {/* Receipt screen */}
         <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ title: 'Receipt' }} />
+
+        <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -61,7 +66,7 @@ function FooterTabs() {
             case 'Search':
               iconName = 'search-outline';
               break;
-            case 'Reports':
+            case 'Tutors':
               iconName = 'document-text-outline';
               break;
             case 'Options':
@@ -79,7 +84,7 @@ function FooterTabs() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Chats" component={ChatsScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Reports" component={ReportsScreen} />
+      <Tab.Screen name="Tutors" component={ReportsScreen} />
       <Tab.Screen name="Options" component={OptionsScreen} />
     </Tab.Navigator>
   );
