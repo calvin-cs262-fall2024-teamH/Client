@@ -1,58 +1,73 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { useNavigation } from '@react-navigation/native'; // Navigation kullanımı
+import { useNavigation } from '@react-navigation/native';
 
-const SectionItem = ({ item, onReorder }) => {
-  const [bgColor, setBgColor] = useState('#fff'); // Initial background color
-  const navigation = useNavigation(); // Navigation instance
+// Course routes object - Ekran adlarını burada belirtin
+const courseRoutes = {
+  "CS 262": "Cs262Screen",
+  "MATH 172": "Math172Screen",
+  "CHEM 101": "Chem101Screen",
+  "MATH 252": "Math252Screen",
+  "CS 336": "Cs336Screen",
+  "CS 101": "Cs101Screen",
+};
 
-  // Function to handle the star button
+const SectionItem = ({ name, tutos, email, profileImage, isFavorite, onToggleFavorite }) => {
+  const navigation = useNavigation();
+  const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff'); // Favori durumu
+
+  useEffect(() => {
+    setBgColor(isFavorite ? '#32CD32' : '#fff');
+  }, [isFavorite]);
+
+  // Handle the star button press
   const handleStarPress = () => {
-    if (bgColor === '#32CD32') {
-      setBgColor('#fff'); // Reset background color to white
+    onToggleFavorite(); // Favori durumunu dış bileşende güncelle
+  };
+
+  // Handle course tag press based on course name
+  const handleCoursePress = (course) => {
+    const screen = courseRoutes[course];
+    if (screen) {
+      navigation.navigate(screen);
     } else {
-      setBgColor('#32CD32'); // Set background to lime green
+      console.warn(`No screen found for course: ${course}`);
     }
   };
 
   return (
     <View style={[styles.itemContainer, { backgroundColor: bgColor }]}>
-      <Text style={styles.name}>{item.name}</Text>
-      <View style={styles.line} />
-      <Text style={styles.details}>{item.details}</Text>
-      <Text style={styles.details}>{item.destination}</Text>
-      <Text style={styles.details}>{item.timeAway}</Text>
+      <View style={styles.row}>
+        <Image source={profileImage} style={styles.profileImage} />
+        <Text style={styles.name}>{name}</Text>
+      </View>
 
-      {/* Buttons */}
+      <View style={styles.line} />
+
+      <Text style={styles.tutosHeader}>Tutos:</Text>
+      <View style={styles.tagsContainer}>
+        {tutos.map((course) => (
+          <TouchableOpacity
+            key={course}
+            style={styles.tag}
+            onPress={() => handleCoursePress(course)}
+          >
+            <Text style={styles.tagText}>{course}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <Text style={styles.emailLabel}>Email:</Text>
+      <Text style={styles.emailText}>{email}</Text>
+
       <View style={styles.buttonContainer}>
-        {/* Button 1 - Navigate to Chat Screen */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Chat')}
-        >
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Chat')}>
           <Icon name="envelope" size={24} color="#fff" />
         </TouchableOpacity>
-        
-        {/* Button 2 - Toggle background color */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={handleStarPress}
-        >
-          <Icon name="star" size={24} color="#fff" />
-        </TouchableOpacity>
 
-        {/* Button 3 - Reorder */}
-        <TouchableOpacity style={styles.button} onPress={onReorder}>
-          <Text style={styles.buttonText}>Reorder</Text>
-        </TouchableOpacity>
-
-        {/* Button 4 - View Receipt */}
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('Receipt')}
-        >
-          <Text style={styles.buttonText}>View Receipt</Text>
+        <TouchableOpacity style={styles.button} onPress={handleStarPress}>
+          <Icon name="star" size={24} color={isFavorite ? '#ffd700' : '#fff'} />
         </TouchableOpacity>
       </View>
     </View>
@@ -62,31 +77,69 @@ const SectionItem = ({ item, onReorder }) => {
 const styles = StyleSheet.create({
   itemContainer: {
     padding: 16,
-    marginBottom: 0,
+    marginBottom: 16,
     borderRadius: 8,
-    borderColor: '#4b3ae0', 
+    borderColor: '#4b3ae0',
     borderWidth: 2,
-    borderTopColor: '#4b3ae0',  
-    borderTopWidth: 7,          
+    borderTopColor: '#4b3ae0',
+    borderTopWidth: 7,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  profileImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    marginRight: 10,
   },
   name: {
     color: '#4b3ae0',
     fontSize: 16,
     fontWeight: 'bold',
   },
-  details: {
+  line: {
+    marginTop: 8,
+    height: 1,
+    backgroundColor: '#4b3ae0',
+    marginVertical: 8,
+  },
+  tutosHeader: {
     fontSize: 14,
+    fontWeight: 'bold',
     color: '#4b3ae0',
   },
-  line: {
-    marginTop: 1,
-    height: 1, 
-    backgroundColor: '#4b3ae0',  
-    marginVertical: 8, 
+  tagsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginTop: 5,
+  },
+  tag: {
+    backgroundColor: '#e0e0e0',
+    borderRadius: 12,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    margin: 4,
+  },
+  tagText: {
+    color: '#4b3ae0',
+    fontSize: 12,
+  },
+  emailLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#4b3ae0',
+    marginTop: 8,
+  },
+  emailText: {
+    fontSize: 14,
+    color: '#555',
+    marginBottom: 10,
   },
   buttonContainer: {
     marginTop: 10,
-    flexDirection: 'row', 
+    flexDirection: 'row',
     justifyContent: 'space-between',
   },
   button: {
@@ -95,11 +148,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     backgroundColor: '#4b3ae0',
     marginHorizontal: 5,
-  },
-  buttonText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: 'bold',
   },
 });
 
