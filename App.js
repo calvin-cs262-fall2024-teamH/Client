@@ -66,7 +66,7 @@ function FooterTabs() {
             case 'Search':
               iconName = 'search-outline';
               break;
-            case 'Reports':
+            case 'Tutors':
               iconName = 'document-text-outline';
               break;
             case 'Options':
@@ -84,7 +84,7 @@ function FooterTabs() {
       <Tab.Screen name="Home" component={HomeScreen} />
       <Tab.Screen name="Chats" component={ChatsScreen} />
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="Reports" component={ReportsScreen} />
+      <Tab.Screen name="Tutors" component={ReportsScreen} />
       <Tab.Screen name="Options" component={OptionsScreen} />
     </Tab.Navigator>
   );

@@ -10,19 +10,19 @@ const DATA = [
     data: [
       {
         name: 'Clive Amoh',
-        tutos: ['CS 262', 'MATH 172'],
+        courses: ['CS 262', 'MATH 172'],
         email: 'clive@domain.com',
         profileImage: require('../assets/yigitturanpp.png'),
       },
       {
         name: 'Rock Lee',
-        tutos: ['CHEM 101', 'MATH 252'],
+        courses: ['CHEM 101', 'MATH 252'],
         email: 'rock@domain.com',
         profileImage: require('../assets/peterpp.png'),
       },
       {
         name: 'Ben Tennyson',
-        tutos: ['CS 336', 'CS 101'],
+        courses: ['CS 336', 'CS 101'],
         email: 'ben@domain.com',
         profileImage: require('../assets/profpp.png'),
       },
@@ -67,7 +67,7 @@ const ReportsScreen = () => {
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
-        <Text style={styles.header}>Reports</Text>
+        <Text style={styles.header}>Tutors</Text>
         <TouchableOpacity
           style={styles.favoritesButton}
           onPress={() => navigation.navigate('FavoritesScreen', { favorites })}
@@ -91,7 +91,7 @@ const ReportsScreen = () => {
         renderItem={({ item }) => (
           <SectionItem
             name={item.name}
-            tutos={item.tutos}
+            courses={item.courses}
             email={item.email}
             profileImage={item.profileImage}
             isFavorite={favorites.some((fav) => fav.name === item.name)}

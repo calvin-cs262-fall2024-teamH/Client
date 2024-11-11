@@ -13,7 +13,7 @@ const courseRoutes = {
   "CS 101": "Cs101Screen",
 };
 
-const SectionItem = ({ name, tutos, email, profileImage, isFavorite, onToggleFavorite }) => {
+const SectionItem = ({ name, courses, email, profileImage, isFavorite, onToggleFavorite }) => {
   const navigation = useNavigation();
   const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff'); // Favori durumu
 
@@ -45,9 +45,9 @@ const SectionItem = ({ name, tutos, email, profileImage, isFavorite, onToggleFav
 
       <View style={styles.line} />
 
-      <Text style={styles.tutosHeader}>Tutos:</Text>
+      <Text style={styles.coursesHeader}>courses:</Text>
       <View style={styles.tagsContainer}>
-        {tutos.map((course) => (
+        {courses.map((course) => (
           <TouchableOpacity
             key={course}
             style={styles.tag}
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#4b3ae0',
     marginVertical: 8,
   },
-  tutosHeader: {
+  coursesHeader: {
     fontSize: 14,
     fontWeight: 'bold',
     color: '#4b3ae0',
