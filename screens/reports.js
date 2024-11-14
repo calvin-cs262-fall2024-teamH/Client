@@ -38,7 +38,7 @@ const ReportsScreen = () => {
 
   const handleSearch = (text) => {
     setSearchQuery(text);
-    
+
     if (text === '') {
       setFilteredData(DATA);
     } else {
@@ -48,7 +48,7 @@ const ReportsScreen = () => {
           item.name.toLowerCase().includes(text.toLowerCase())
         ),
       })).filter(section => section.data.length > 0);
-      
+
       setFilteredData(filtered);
     }
   };

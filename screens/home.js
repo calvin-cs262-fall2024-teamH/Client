@@ -1,6 +1,5 @@
-// home.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator, TextInput } from 'react-native';
 
 // Pixabay API configuration
 const PIXABAY_API_KEY = '47068954-556e7ed04216c0e453375d551';
@@ -15,7 +14,7 @@ const getSearchQuery = (courseCode) => {
   if (courseCode.startsWith('ENGR')) return 'Engineering';
   if (courseCode.startsWith('MATH')) return 'Math';
   if (courseCode.startsWith('STAT')) return 'Statistics';
-  return 'Education'; // Default search term
+  return 'Education';
 };
 
 // Default images mapping for categories
@@ -90,6 +89,8 @@ export default function HomeScreen({ navigation }) {
   const [courses, setCourses] = useState([]);
   const [images, setImages] = useState({}); // Stores course images
   const usedImageIds = new Set(); // Image ID cache for ensuring unique images
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredClasses, setFilteredClasses] = useState([]);
 
   // Fetch courses and images from the backend
   const getCourses = async () => {
@@ -97,6 +98,7 @@ export default function HomeScreen({ navigation }) {
       const response = await fetch('https://calvintutorshub.azurewebsites.net/coursecodes');
       const json = await response.json();
       setCourses(json);
+      setFilteredClasses(json);
 
       const imagesMap = {};
       for (const course of json) {
@@ -119,17 +121,35 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("CourseScreen", { courseCode: course });
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filteredResults = courses.filter(classItem =>
+        classItem.coursecode.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredClasses(filteredResults);
+    } else {
+      setFilteredClasses(courses);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
       <Text style={styles.userHeader}>Welcome, Sam!</Text>
       <Text style={styles.header}>Offered Courses:</Text>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search classes..."
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
 
       {isLoading ? (
         <ActivityIndicator size="40" color="#ffffff" />
       ) : (
         <FlatList
-          data={courses}
+          data={filteredClasses}
           keyExtractor={(item) => item.coursecode}
           renderItem={({ item }) => {
             const formattedCourseCode = item.coursecode.replace(/([A-Za-z]+)(\d+)/, '$1 $2');
@@ -210,5 +230,14 @@ const styles = StyleSheet.create({
     color: '#4b3ae0',
     textAlign: 'center',
     paddingTop: 5,
+  },
+  searchBar: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
   },
 });
