@@ -1,32 +1,41 @@
-// home.js
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+//
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 
 // creates CourseCard component that displays course 'name' and 'image'
 const CourseCard = ({ name, image, onPress }) => {
   return (
     // TouchableOpacity makes the entire component clickable
-      <TouchableOpacity style={styles.card} onPress={onPress}> 
-        <Image source={image} style={styles.image} />
-        <Text style={styles.courseText}>{name}</Text>
+    <TouchableOpacity style={styles.card} onPress={onPress}> 
+      <Image source={image} style={styles.image} />
+      <Text style={styles.courseText}>{name}</Text>
     </TouchableOpacity>
-  )
-}
-
-// creates NewsCard component that displays course 'name' and 'image'
-const NewsCard = ({ name, image, onPress }) => {
-  return (
-      // TouchableOpacity makes the entire component clickable
-      <TouchableOpacity style={styles.newsCard} onPress={onPress}>
-        <Image source={image} style={styles.newsImage} />
-        <Text style={styles.newsText}>{name}</Text>
-    </TouchableOpacity>
-  )
+  );
 }
 
 export default function HomeScreen({ navigation }) {
+  const [isLoading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
 
-  // method handles where to navigate to depending on which component is clicked
+  // Fetch courses from the API
+  const getCourses = async () => {
+    try {
+      const response = await fetch('https://calvintutorshub.azurewebsites.net/coursecodes');
+      const json = await response.json();
+      setCourses(json); // Setting the course codes to state
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Call the getCourses function on component mount
+  useEffect(() => {
+    getCourses();
+  }, []);
+
+  // Method handles where to navigate to depending on which course is clicked
   const handleCardPress = (course) => {
     if (course === "CS 262") {
       navigation.navigate("Cs262Screen");
@@ -36,53 +45,38 @@ export default function HomeScreen({ navigation }) {
       navigation.navigate("Chem101Screen");
     } else if (course === "MATH 252") {
       navigation.navigate("Math252Screen");
-    }
-    // logs what was clicked if no method included in the if elses
-    else {
+    } else {
       console.log('Pressed ' + course);
     }
-  }
+  };
 
   return (
     <View style={styles.container}>
-
       {/* TH logo */}
-      <Image source = {require('../assets/logoBlack.png')} style = {styles.logoImage} />
+      <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
 
-      <Text style={styles.userHeader}>Welcome, *username*!</Text> 
+      <Text style={styles.userHeader}>Welcome, Sam!</Text> 
 
       <Text style={styles.header}>Offered Courses:</Text> 
       
-      {/* All of the currently offered CourseCards */}
-      <View style={styles.cardsContainer}>
-        <CourseCard
-          name="CS 262"
-          image={require('../assets/262pic.jpg')}
-          onPress={() => handleCardPress("CS 262")}
+      {/* Conditionally render loading indicator or course list */}
+      {isLoading ? (
+        <ActivityIndicator size="40" color="#ffffff" />
+      ) : (
+        <FlatList
+          data={courses}
+          keyExtractor={(item) => item.coursecode} // Use course code as key
+          renderItem={({ item }) => (
+            <CourseCard
+              name={item.coursecode} // Use course code for the name
+              image={require('../assets/172pic.jpg')} // Replace with dynamic image if needed
+              onPress={() => handleCardPress(item.coursecode)} // Pass course code for navigation
+            />
+          )}
+          numColumns={4} // Specify that we want 4 cards per row
+          contentContainerStyle={styles.cardsContainer} // Apply the existing container style
         />
-        <CourseCard
-          name="MATH 172"
-          image={require('../assets/172pic.jpg')}
-          onPress={() => handleCardPress("MATH 172")}
-        />
-        <CourseCard
-          name="CHEM 101"
-          image={require('../assets/101.jpg')}
-          onPress={() => handleCardPress("CHEM 101")}
-        />
-        <CourseCard
-          name="MATH 252"
-          image={require('../assets/172pic.jpg')}
-          onPress={() => handleCardPress("MATH 252")}
-        />
-      </View>
-
-      {/* News/Announcements Card*/}
-      <NewsCard
-        name="News/Announcements"
-        image={require('../assets/NA.jpg')}
-        onPress={() => console.log("News button pressed.")}
-      />
+      )}
     </View>
   );
 }
@@ -91,7 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    paddingHorizontal: 0,
+    paddingHorizontal: -5,
     backgroundColor: '#4b3ae0',
   },
   header: {
@@ -114,37 +108,25 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    flexWrap: 'wrap', // Ensure cards wrap into the next line when needed
+    justifyContent: 'space-between', // Equal space between cards
+    marginTop: 10,
+    paddingHorizontal: 10, // Padding around the container
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 15,
     overflow: 'hidden',
-    width: 100,
-    height: 140,
+    flexBasis: '22%', // Set the card width to 22% of the container
+    height: 140, // Fixed height for all cards
     alignItems: 'center',
     justifyContent: 'flex-start',
-  },
-  newsCard: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    width: 415,
-    height: 375,
-    alignItems: 'center',
-    marginLeft: 7,
-    marginTop: 25,
-    paddingTop: 0,
+    marginBottom: 15, // Vertical space between rows
+    marginHorizontal: '1%', // Horizontal margin between cards
   },
   image: {
     width: '100%',
     height: 110,
-  },
-  newsImage: {
-    width: '100%',
-    height: 325,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-
   },
   logoImage: {
     width: 100,
@@ -158,12 +140,5 @@ const styles = StyleSheet.create({
     color: '#4b3ae0',
     textAlign: 'center',
     paddingTop: 5,
-  },
-  newsText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4b3ae0',
-    textAlign: 'center',
-    paddingTop: 15,
   },
 });
