@@ -1,28 +1,109 @@
-//
+// home.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 
-// creates CourseCard component that displays course 'name' and 'image'
+// Pixabay API configuration
+const PIXABAY_API_KEY = '47068954-556e7ed04216c0e453375d551';
+const PIXABAY_BASE_URL = 'https://pixabay.com/api/';
+
+const placeholderImage = 'https://via.placeholder.com/150/FF0000/FFFFFF?text=No+Image';
+
+// Function to determine search query based on course code
+const getSearchQuery = (courseCode) => {
+  if (courseCode.startsWith('CS')) return 'Computer Science';
+  if (courseCode.startsWith('COMM')) return 'Communications Class';
+  if (courseCode.startsWith('ENGR')) return 'Engineering';
+  if (courseCode.startsWith('MATH')) return 'Math';
+  if (courseCode.startsWith('STAT')) return 'Statistics';
+  return 'Education'; // Default search term
+};
+
+// Default images mapping for categories
+const defaultImages = {
+  CS: require('../assets/CSdefault.png'),
+  COMM: require('../assets/COMMdefault.png'),
+  ENGR: require('../assets/ENGRdefault.png'),
+  MATH: require('../assets/MATHdefault.png'),
+  STAT: require('../assets/STATdefault.png'),
+  DEFAULT: 'https://via.placeholder.com/150/808080/FFFFFF?text=Default+Image',
+};
+
+// Function to determine the default image for a course code
+const getDefaultImage = (courseCode) => {
+  if (courseCode.startsWith('CS')) return defaultImages.CS;
+  if (courseCode.startsWith('COMM')) return defaultImages.COMM;
+  if (courseCode.startsWith('ENGR')) return defaultImages.ENGR;
+  if (courseCode.startsWith('MATH')) return defaultImages.MATH;
+  if (courseCode.startsWith('STAT')) return defaultImages.STAT;
+  return defaultImages.DEFAULT;
+};
+
+// Updated fetchImageForCourse function
+const fetchImageForCourse = async (courseCode, usedImageIds) => {
+  const searchQuery = getSearchQuery(courseCode);
+  const url = `${PIXABAY_BASE_URL}?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(searchQuery)}&image_type=photo`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        console.error('API rate limit reached.');
+      } else {
+        console.error(`API request failed with status: ${response.status}`);
+      }
+      return getDefaultImage(courseCode); // Return default image if API fails
+    }
+
+    const json = await response.json();
+
+    if (json.hits && json.hits.length > 0) {
+      // Find the first unique image not already used
+      for (const hit of json.hits) {
+        if (!usedImageIds.has(hit.id)) {
+          usedImageIds.add(hit.id); // Mark the ID as used
+          return hit.webformatURL;
+        }
+      }
+    }
+
+    return getDefaultImage(courseCode); // Return default image if no unique image is found
+  } catch (error) {
+    console.error(`Error fetching image for ${courseCode}:`, error);
+    return getDefaultImage(courseCode); // Return default image if an error occurs
+  }
+};
+
 const CourseCard = ({ name, image, onPress }) => {
+  const imageSource = typeof image === 'string' ? { uri: image } : image;
+
   return (
-    // TouchableOpacity makes the entire component clickable
-    <TouchableOpacity style={styles.card} onPress={onPress}> 
-      <Image source={image} style={styles.image} />
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Image source={imageSource} style={styles.image} />
       <Text style={styles.courseText}>{name}</Text>
     </TouchableOpacity>
   );
-}
+};
 
 export default function HomeScreen({ navigation }) {
   const [isLoading, setLoading] = useState(true);
   const [courses, setCourses] = useState([]);
+  const [images, setImages] = useState({}); // Stores course images
+  const usedImageIds = new Set(); // Image ID cache for ensuring unique images
 
-  // Fetch courses from the API
+  // Fetch courses and images from the backend
   const getCourses = async () => {
     try {
       const response = await fetch('https://calvintutorshub.azurewebsites.net/coursecodes');
       const json = await response.json();
-      setCourses(json); // Setting the course codes to state
+      setCourses(json);
+
+      const imagesMap = {};
+      for (const course of json) {
+        const courseImage = await fetchImageForCourse(course.coursecode, usedImageIds);
+        imagesMap[course.coursecode] = courseImage;
+      }
+      setImages(imagesMap);
     } catch (error) {
       console.error(error);
     } finally {
@@ -30,51 +111,40 @@ export default function HomeScreen({ navigation }) {
     }
   };
 
-  // Call the getCourses function on component mount
   useEffect(() => {
     getCourses();
   }, []);
 
-  // Method handles where to navigate to depending on which course is clicked
   const handleCardPress = (course) => {
-    if (course === "CS 262") {
-      navigation.navigate("Cs262Screen");
-    } else if (course === "MATH 172") {
-      navigation.navigate("Math172Screen");
-    } else if (course === "CHEM 101") {
-      navigation.navigate("Chem101Screen");
-    } else if (course === "MATH 252") {
-      navigation.navigate("Math252Screen");
-    } else {
-      console.log('Pressed ' + course);
-    }
+    navigation.navigate("CourseScreen", { courseCode: course });
   };
 
   return (
     <View style={styles.container}>
-      {/* TH logo */}
       <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
+      <Text style={styles.userHeader}>Welcome, Sam!</Text>
+      <Text style={styles.header}>Offered Courses:</Text>
 
-      <Text style={styles.userHeader}>Welcome, Sam!</Text> 
-
-      <Text style={styles.header}>Offered Courses:</Text> 
-      
-      {/* Conditionally render loading indicator or course list */}
       {isLoading ? (
         <ActivityIndicator size="40" color="#ffffff" />
       ) : (
         <FlatList
           data={courses}
-          keyExtractor={(item) => item.coursecode} // Use course code as key
-          renderItem={({ item }) => (
-            <CourseCard
-              name={item.coursecode} // Use course code for the name
-              image={require('../assets/172pic.jpg')} // Replace with dynamic image if needed
-              onPress={() => handleCardPress(item.coursecode)} // Pass course code for navigation
-            />
-          )}
-          numColumns={4} // Specify that we want 4 cards per row
-          contentContainerStyle={styles.cardsContainer} // Apply the existing container style
+          keyExtractor={(item) => item.coursecode}
+          renderItem={({ item }) => {
+            const formattedCourseCode = item.coursecode.replace(/([A-Za-z]+)(\d+)/, '$1 $2');
+            const image = images[item.coursecode] || placeholderImage;
+            return (
+              <CourseCard
+                name={formattedCourseCode}
+                image={image}
+                onPress={() => handleCardPress(item.coursecode)}
+              />
+            );
+          }}
+          numColumns={4}
+          contentContainerStyle={styles.cardsContainer}
+          columnWrapperStyle={styles.row}
         />
       )}
     </View>
@@ -91,7 +161,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 27,
     fontWeight: 'semibold',
-    color: '#ffffff', 
+    color: '#ffffff',
     marginBottom: 10,
     marginLeft: 7,
     paddingTop: 10,
@@ -100,29 +170,29 @@ const styles = StyleSheet.create({
   userHeader: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#ffffff', 
+    color: '#ffffff',
     marginBottom: -5,
     marginLeft: 7,
     paddingTop: 10,
     textAlign: 'left',
   },
   cardsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap', // Ensure cards wrap into the next line when needed
-    justifyContent: 'space-between', // Equal space between cards
-    marginTop: 10,
-    paddingHorizontal: 10, // Padding around the container
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  row: {
+    justifyContent: 'space-between',
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 15,
     overflow: 'hidden',
-    flexBasis: '22%', // Set the card width to 22% of the container
-    height: 140, // Fixed height for all cards
+    flexBasis: '22%',
+    height: 140,
     alignItems: 'center',
     justifyContent: 'flex-start',
-    marginBottom: 15, // Vertical space between rows
-    marginHorizontal: '1%', // Horizontal margin between cards
+    marginBottom: 15,
+    marginHorizontal: '1%',
   },
   image: {
     width: '100%',
