@@ -135,12 +135,16 @@ export default function HomeScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
-      <Text style={styles.userHeader}>Welcome, Sam!</Text>
-      <Text style={styles.header}>Offered Courses:</Text>
+      <View style={styles.headerContainer}>
+        <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
+        <View style={styles.textContainer}>
+          <Text style={styles.userHeader}>Welcome, Sam!</Text>
+          <Text style={styles.header}>Offered Courses:</Text>
+        </View>
+      </View>
       <TextInput
         style={styles.searchBar}
-        placeholder="Search classes..."
+        placeholder="Search courses..."
         value={searchQuery}
         onChangeText={handleSearch}
       />
@@ -177,6 +181,21 @@ const styles = StyleSheet.create({
     paddingTop: 15,
     paddingHorizontal: -5,
     backgroundColor: '#4b3ae0',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    marginRight: 30,
+    marginLeft: 5,
+    resizeMode: 'contain',
+  },
+  textContainer: {
+    flex: 1,
   },
   header: {
     fontSize: 27,
@@ -217,12 +236,6 @@ const styles = StyleSheet.create({
   image: {
     width: '100%',
     height: 110,
-  },
-  logoImage: {
-    width: 100,
-    height: 80,
-    alignSelf: 'left',
-    marginLeft: 7,
   },
   courseText: {
     fontSize: 16,
