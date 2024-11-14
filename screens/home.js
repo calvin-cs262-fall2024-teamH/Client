@@ -1,88 +1,152 @@
 // home.js
-import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
 
-// creates CourseCard component that displays course 'name' and 'image'
+// Pixabay API configuration
+const PIXABAY_API_KEY = '47068954-556e7ed04216c0e453375d551';
+const PIXABAY_BASE_URL = 'https://pixabay.com/api/';
+
+const placeholderImage = 'https://via.placeholder.com/150/FF0000/FFFFFF?text=No+Image';
+
+// Function to determine search query based on course code
+const getSearchQuery = (courseCode) => {
+  if (courseCode.startsWith('CS')) return 'Computer Science';
+  if (courseCode.startsWith('COMM')) return 'Communications Class';
+  if (courseCode.startsWith('ENGR')) return 'Engineering';
+  if (courseCode.startsWith('MATH')) return 'Math';
+  if (courseCode.startsWith('STAT')) return 'Statistics';
+  return 'Education'; // Default search term
+};
+
+// Default images mapping for categories
+const defaultImages = {
+  CS: require('../assets/CSdefault.png'),
+  COMM: require('../assets/COMMdefault.png'),
+  ENGR: require('../assets/ENGRdefault.png'),
+  MATH: require('../assets/MATHdefault.png'),
+  STAT: require('../assets/STATdefault.png'),
+  DEFAULT: 'https://via.placeholder.com/150/808080/FFFFFF?text=Default+Image',
+};
+
+// Function to determine the default image for a course code
+const getDefaultImage = (courseCode) => {
+  if (courseCode.startsWith('CS')) return defaultImages.CS;
+  if (courseCode.startsWith('COMM')) return defaultImages.COMM;
+  if (courseCode.startsWith('ENGR')) return defaultImages.ENGR;
+  if (courseCode.startsWith('MATH')) return defaultImages.MATH;
+  if (courseCode.startsWith('STAT')) return defaultImages.STAT;
+  return defaultImages.DEFAULT;
+};
+
+// Updated fetchImageForCourse function
+const fetchImageForCourse = async (courseCode, usedImageIds) => {
+  const searchQuery = getSearchQuery(courseCode);
+  const url = `${PIXABAY_BASE_URL}?key=${PIXABAY_API_KEY}&q=${encodeURIComponent(searchQuery)}&image_type=photo`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        console.error('API rate limit reached.');
+      } else {
+        console.error(`API request failed with status: ${response.status}`);
+      }
+      return getDefaultImage(courseCode); // Return default image if API fails
+    }
+
+    const json = await response.json();
+
+    if (json.hits && json.hits.length > 0) {
+      // Find the first unique image not already used
+      for (const hit of json.hits) {
+        if (!usedImageIds.has(hit.id)) {
+          usedImageIds.add(hit.id); // Mark the ID as used
+          return hit.webformatURL;
+        }
+      }
+    }
+
+    return getDefaultImage(courseCode); // Return default image if no unique image is found
+  } catch (error) {
+    console.error(`Error fetching image for ${courseCode}:`, error);
+    return getDefaultImage(courseCode); // Return default image if an error occurs
+  }
+};
+
 const CourseCard = ({ name, image, onPress }) => {
-  return (
-    // TouchableOpacity makes the entire component clickable
-      <TouchableOpacity style={styles.card} onPress={onPress}> 
-        <Image source={image} style={styles.image} />
-        <Text style={styles.courseText}>{name}</Text>
-    </TouchableOpacity>
-  )
-}
+  const imageSource = typeof image === 'string' ? { uri: image } : image;
 
-// creates NewsCard component that displays course 'name' and 'image'
-const NewsCard = ({ name, image, onPress }) => {
   return (
-      // TouchableOpacity makes the entire component clickable
-      <TouchableOpacity style={styles.newsCard} onPress={onPress}>
-        <Image source={image} style={styles.newsImage} />
-        <Text style={styles.newsText}>{name}</Text>
+    <TouchableOpacity style={styles.card} onPress={onPress}>
+      <Image source={imageSource} style={styles.image} />
+      <Text style={styles.courseText}>{name}</Text>
     </TouchableOpacity>
-  )
-}
+  );
+};
 
 export default function HomeScreen({ navigation }) {
+  const [isLoading, setLoading] = useState(true);
+  const [courses, setCourses] = useState([]);
+  const [images, setImages] = useState({}); // Stores course images
+  const usedImageIds = new Set(); // Image ID cache for ensuring unique images
 
-  // method handles where to navigate to depending on which component is clicked
+  // Fetch courses and images from the backend
+  const getCourses = async () => {
+    try {
+      const response = await fetch('https://calvintutorshub.azurewebsites.net/coursecodes');
+      const json = await response.json();
+      setCourses(json);
+
+      const imagesMap = {};
+      for (const course of json) {
+        const courseImage = await fetchImageForCourse(course.coursecode, usedImageIds);
+        imagesMap[course.coursecode] = courseImage;
+      }
+      setImages(imagesMap);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getCourses();
+  }, []);
+
   const handleCardPress = (course) => {
-    if (course === "CS 262") {
-      navigation.navigate("Cs262Screen");
-    } else if (course === "MATH 172") {
-      navigation.navigate("Math172Screen");
-    } else if (course === "CHEM 101") {
-      navigation.navigate("Chem101Screen");
-    } else if (course === "MATH 252") {
-      navigation.navigate("Math252Screen");
-    }
-    // logs what was clicked if no method included in the if elses
-    else {
-      console.log('Pressed ' + course);
-    }
-  }
+    navigation.navigate("CourseScreen", { courseCode: course });
+  };
 
   return (
     <View style={styles.container}>
+      <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
+      <Text style={styles.userHeader}>Welcome, Sam!</Text>
+      <Text style={styles.header}>Offered Courses:</Text>
 
-      {/* TH logo */}
-      <Image source = {require('../assets/logoBlack.png')} style = {styles.logoImage} />
-
-      <Text style={styles.userHeader}>Welcome, *username*!</Text> 
-
-      <Text style={styles.header}>Offered Courses:</Text> 
-      
-      {/* All of the currently offered CourseCards */}
-      <View style={styles.cardsContainer}>
-        <CourseCard
-          name="CS 262"
-          image={require('../assets/262pic.jpg')}
-          onPress={() => handleCardPress("CS 262")}
+      {isLoading ? (
+        <ActivityIndicator size="40" color="#ffffff" />
+      ) : (
+        <FlatList
+          data={courses}
+          keyExtractor={(item) => item.coursecode}
+          renderItem={({ item }) => {
+            const formattedCourseCode = item.coursecode.replace(/([A-Za-z]+)(\d+)/, '$1 $2');
+            const image = images[item.coursecode] || placeholderImage;
+            return (
+              <CourseCard
+                name={formattedCourseCode}
+                image={image}
+                onPress={() => handleCardPress(item.coursecode)}
+              />
+            );
+          }}
+          numColumns={4}
+          contentContainerStyle={styles.cardsContainer}
+          columnWrapperStyle={styles.row}
         />
-        <CourseCard
-          name="MATH 172"
-          image={require('../assets/172pic.jpg')}
-          onPress={() => handleCardPress("MATH 172")}
-        />
-        <CourseCard
-          name="CHEM 101"
-          image={require('../assets/101.jpg')}
-          onPress={() => handleCardPress("CHEM 101")}
-        />
-        <CourseCard
-          name="MATH 252"
-          image={require('../assets/172pic.jpg')}
-          onPress={() => handleCardPress("MATH 252")}
-        />
-      </View>
-
-      {/* News/Announcements Card*/}
-      <NewsCard
-        name="News/Announcements"
-        image={require('../assets/NA.jpg')}
-        onPress={() => console.log("News button pressed.")}
-      />
+      )}
     </View>
   );
 }
@@ -91,13 +155,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    paddingHorizontal: 0,
+    paddingHorizontal: -5,
     backgroundColor: '#4b3ae0',
   },
   header: {
     fontSize: 27,
     fontWeight: 'semibold',
-    color: '#ffffff', 
+    color: '#ffffff',
     marginBottom: 10,
     marginLeft: 7,
     paddingTop: 10,
@@ -106,45 +170,33 @@ const styles = StyleSheet.create({
   userHeader: {
     fontSize: 30,
     fontWeight: 'bold',
-    color: '#ffffff', 
+    color: '#ffffff',
     marginBottom: -5,
     marginLeft: 7,
     paddingTop: 10,
     textAlign: 'left',
   },
   cardsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
+    paddingVertical: 10,
+    paddingHorizontal: 5,
+  },
+  row: {
+    justifyContent: 'space-between',
   },
   card: {
     backgroundColor: '#fff',
     borderRadius: 15,
     overflow: 'hidden',
-    width: 100,
+    flexBasis: '22%',
     height: 140,
     alignItems: 'center',
     justifyContent: 'flex-start',
-  },
-  newsCard: {
-    backgroundColor: '#fff',
-    borderRadius: 15,
-    width: 415,
-    height: 375,
-    alignItems: 'center',
-    marginLeft: 7,
-    marginTop: 25,
-    paddingTop: 0,
+    marginBottom: 15,
+    marginHorizontal: '1%',
   },
   image: {
     width: '100%',
     height: 110,
-  },
-  newsImage: {
-    width: '100%',
-    height: 325,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-
   },
   logoImage: {
     width: 100,
@@ -158,12 +210,5 @@ const styles = StyleSheet.create({
     color: '#4b3ae0',
     textAlign: 'center',
     paddingTop: 5,
-  },
-  newsText: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4b3ae0',
-    textAlign: 'center',
-    paddingTop: 15,
   },
 });
