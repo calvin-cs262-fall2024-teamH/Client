@@ -17,7 +17,7 @@ const SectionItem = ({ name, courses, email, isFavorite, onToggleFavorite }) => 
 
   const handleMailPress = () => {
     // Navigate to the 'Chat' screen and pass the email
-    navigation.navigate('Chat', { email });  // Pass email to Chat screen
+    navigation.navigate('FooterTabs', { screen: "Chats" });  // Pass email to Chat screen
   };
 
   return (
