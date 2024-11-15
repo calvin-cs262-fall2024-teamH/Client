@@ -24,7 +24,7 @@ const CourseScreen = ({ route, navigation }) => {
   }, [courseCode]);
 
   const handleChatPress = (tutorName) => {
-    navigation.navigate("Chat", { tutorName }); // Pass tutor name to Chat screen if needed
+    navigation.navigate("FooterTabs", { screen: "Chats" }); // Pass tutor name to Chat screen if needed
   };
 
   const renderTutorCard = ({ item }) => (

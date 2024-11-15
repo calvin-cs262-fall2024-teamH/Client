@@ -1,29 +1,22 @@
 import React from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
-import SectionItem from '../components/SectionItem';
+import { View, Text, StyleSheet, FlatList } from 'react-native';
 
-const FavoritesScreen = ({ route }) => {
-  const { favorites } = route.params; // Favori tutorları al
+const FavoriteScreen = ({ route }) => {
+  const { favoriteTutors } = route.params;  // Favori tutorlar, önceki ekrandan geliyor
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Favorites</Text>
-      {favorites.length > 0 ? (
-        <FlatList
-          data={favorites}
-          keyExtractor={(item) => item.name}
-          renderItem={({ item }) => (
-            <SectionItem
-              name={item.name}
-              tutos={item.tutos}
-              email={item.email}
-              profileImage={item.profileImage}
-            />
-          )}
-        />
-      ) : (
-        <Text style={styles.noFavoritesText}>No favorites yet!</Text>
-      )}
+      <Text style={styles.header}>Favorite Tutors</Text>
+      <FlatList
+        data={favoriteTutors}
+        renderItem={({ item }) => (
+          <View style={styles.tutorItem}>
+            <Text style={styles.tutorName}>{item.name}</Text>
+            <Text style={styles.tutorEmail}>{item.email}</Text>
+          </View>
+        )}
+        keyExtractor={(item) => item.name}
+      />
     </View>
   );
 };
@@ -31,22 +24,25 @@ const FavoritesScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
     backgroundColor: '#fff',
+    padding: 20,
   },
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    textAlign: 'center',
-    color: '#4b3ae0',
     marginBottom: 20,
   },
-  noFavoritesText: {
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 20,
-    color: '#555',
+  tutorItem: {
+    marginBottom: 15,
+  },
+  tutorName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  tutorEmail: {
+    fontSize: 14,
+    color: '#888',
   },
 });
 
-export default FavoritesScreen;
+export default FavoriteScreen;

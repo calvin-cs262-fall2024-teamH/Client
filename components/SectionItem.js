@@ -1,73 +1,48 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 
-// Course routes object - Ekran adlarını burada belirtin
-const courseRoutes = {
-  "CS 262": "Cs262Screen",
-  "MATH 172": "Math172Screen",
-  "CHEM 101": "Chem101Screen",
-  "MATH 252": "Math252Screen",
-  "CS 336": "Cs336Screen",
-  "CS 101": "Cs101Screen",
-};
-
-const SectionItem = ({ name, courses, email, profileImage, isFavorite, onToggleFavorite }) => {
+const SectionItem = ({ name, courses, email, isFavorite, onToggleFavorite }) => {
+  const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff');  // Favori durumunu kontrol et
   const navigation = useNavigation();
-  const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff'); // Favori durumu
 
   useEffect(() => {
-    setBgColor(isFavorite ? '#32CD32' : '#fff');
+    setBgColor(isFavorite ? '#32CD32' : '#fff');  // Rengi yeşil yap ya da beyaz
   }, [isFavorite]);
 
-  // Handle the star button press
   const handleStarPress = () => {
-    onToggleFavorite(); // Favori durumunu dış bileşende güncelle
+    onToggleFavorite();  // Favori durumunu dış bileşende güncelle
   };
 
-  // Handle course tag press based on course name
-  const handleCoursePress = (course) => {
-    const screen = courseRoutes[course];
-    if (screen) {
-      navigation.navigate(screen);
-    } else {
-      console.warn(`No screen found for course: ${course}`);
-    }
+  const handleMailPress = () => {
+    // Navigate to the 'Chat' screen and pass the email
+    navigation.navigate('FooterTabs', { screen: "Chats" });  // Pass email to Chat screen
   };
 
   return (
-    <View style={[styles.itemContainer, { backgroundColor: bgColor }]}>
-      <View style={styles.row}>
-        <Image source={profileImage} style={styles.profileImage} />
-        <Text style={styles.name}>{name}</Text>
-      </View>
-
-      <View style={styles.line} />
-
-      <Text style={styles.coursesHeader}>courses:</Text>
-      <View style={styles.tagsContainer}>
-        {courses.map((course) => (
-          <TouchableOpacity
-            key={course}
-            style={styles.tag}
-            onPress={() => handleCoursePress(course)}
-          >
-            <Text style={styles.tagText}>{course}</Text>
-          </TouchableOpacity>
+    <View style={styles.itemContainer}>
+      <Text style={styles.name}>{name}</Text>
+      <View style={styles.separator}></View>
+      
+      <View style={styles.coursesContainer}>
+        <Text style={styles.coursesHeader}>Courses:</Text>
+        {courses.map((course, index) => (
+          <Text key={index} style={styles.courseText}>
+            {course.courseCode}
+          </Text>
         ))}
       </View>
 
-      <Text style={styles.emailLabel}>Email:</Text>
-      <Text style={styles.emailText}>{email}</Text>
-
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Chat')}>
+      <View style={styles.footerContainer}>
+        {/* Mail butonu */}
+        <TouchableOpacity onPress={handleMailPress} style={styles.iconButton}>
           <Icon name="envelope" size={24} color="#fff" />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={handleStarPress}>
-          <Icon name="star" size={24} color={isFavorite ? '#ffd700' : '#fff'} />
+        {/* Yıldız butonu */}
+        <TouchableOpacity onPress={handleStarPress} style={[styles.iconButton, { backgroundColor: bgColor }]}>
+          <Icon name="star" size={24} color={isFavorite ? '#fff' : '#000'} />
         </TouchableOpacity>
       </View>
     </View>
@@ -77,77 +52,49 @@ const SectionItem = ({ name, courses, email, profileImage, isFavorite, onToggleF
 const styles = StyleSheet.create({
   itemContainer: {
     padding: 16,
-    marginBottom: 16,
     borderRadius: 8,
-    borderColor: '#4b3ae0',
-    borderWidth: 2,
-    borderTopColor: '#4b3ae0',
-    borderTopWidth: 7,
-  },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  profileImage: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
+    backgroundColor: '#fff',
+    marginBottom: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 3,
   },
   name: {
-    color: '#4b3ae0',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
+    color: '#333',
   },
-  line: {
-    marginTop: 8,
+  separator: {
+    marginVertical: 8,
     height: 1,
     backgroundColor: '#4b3ae0',
-    marginVertical: 8,
+    borderBottomWidth:2,
+    borderBottomColor:'#4b3ae0'
+  },
+  coursesContainer: {
+    marginBottom: 12,
   },
   coursesHeader: {
-    fontSize: 14,
     fontWeight: 'bold',
-    color: '#4b3ae0',
-  },
-  tagsContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    marginTop: 5,
-  },
-  tag: {
-    backgroundColor: '#e0e0e0',
-    borderRadius: 12,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    margin: 4,
-  },
-  tagText: {
-    color: '#4b3ae0',
-    fontSize: 12,
-  },
-  emailLabel: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#4b3ae0',
-    marginTop: 8,
+    color: '#333',
   },
-  emailText: {
+  courseText: {
     fontSize: 14,
     color: '#555',
-    marginBottom: 10,
   },
-  buttonContainer: {
-    marginTop: 10,
+  footerContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-  },
-  button: {
     alignItems: 'center',
-    padding: 6,
-    borderRadius: 8,
-    backgroundColor: '#4b3ae0',
-    marginHorizontal: 5,
+  },
+  iconButton: {
+    padding: 7,
+    backgroundColor: '#4b3ae0' , // Default button color
+    borderRadius: 50,
+    marginRight: 10,
   },
 });
 
