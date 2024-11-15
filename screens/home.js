@@ -1,8 +1,38 @@
 // home.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator, TextInput } from 'react-native';
 
+// const fetchWithRateLimit = async (url) => {
+//   try {
+//     const response = await fetch(url);
+
+//     // Log rate limit information
+//     const rateLimit = response.headers.get('X-RateLimit-Limit');
+//     const rateRemaining = response.headers.get('X-RateLimit-Remaining');
+//     const rateReset = response.headers.get('X-RateLimit-Reset');
+
+//     console.log(`Rate Limit: ${rateLimit}`);
+//     console.log(`Requests Remaining: ${rateRemaining}`);
+//     console.log(`Rate Limit Resets In: ${rateReset} seconds`);
+
+//     if (!response.ok) {
+//       throw new Error(`Request failed with status: ${response.status}`);
+//     }
+
+//     const data = await response.json();
+//     return data;
+
+//   } catch (error) {
+//     console.error('Error:', error);
+//   }
+// };
+
+// Usage example
+// const PIXABAY_API_URL = 'https://pixabay.com/api/?key=YOUR_API_KEY&q=flowers';
+
+// fetchWithRateLimit(PIXABAY_API_URL);
 // Pixabay API configuration
+
 const PIXABAY_API_KEY = '47068954-556e7ed04216c0e453375d551';
 const PIXABAY_BASE_URL = 'https://pixabay.com/api/';
 
@@ -90,6 +120,8 @@ export default function HomeScreen({ navigation }) {
   const [courses, setCourses] = useState([]);
   const [images, setImages] = useState({}); // Stores course images
   const usedImageIds = new Set(); // Image ID cache for ensuring unique images
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredClasses, setFilteredClasses] = useState([]);
 
   // Fetch courses and images from the backend
   const getCourses = async () => {
@@ -97,6 +129,8 @@ export default function HomeScreen({ navigation }) {
       const response = await fetch('https://calvintutorshub.azurewebsites.net/coursecodes');
       const json = await response.json();
       setCourses(json);
+      setFilteredClasses(json);
+
 
       const imagesMap = {};
       for (const course of json) {
@@ -119,17 +153,38 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate("CourseScreen", { courseCode: course });
   };
 
+  const handleSearch = (query) => {
+    setSearchQuery(query);
+    if (query) {
+      const filteredResults = courses.filter(classItem =>
+        classItem.coursecode.toLowerCase().includes(query.toLowerCase())
+      );
+      setFilteredClasses(filteredResults);
+    } else {
+      setFilteredClasses(courses);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
-      <Text style={styles.userHeader}>Welcome, Sam!</Text>
-      <Text style={styles.header}>Offered Courses:</Text>
-
+      <View style={styles.headerContainer}>
+        <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
+        <View style={styles.textContainer}>
+          <Text style={styles.userHeader}>Welcome, Sam!</Text>
+          <Text style={styles.header}>Offered Courses:</Text>
+        </View>
+      </View>
+      <TextInput
+        style={styles.searchBar}
+        placeholder="Search courses..."
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
       {isLoading ? (
         <ActivityIndicator size="40" color="#ffffff" />
       ) : (
         <FlatList
-          data={courses}
+          data={filteredClasses}
           keyExtractor={(item) => item.coursecode}
           renderItem={({ item }) => {
             const formattedCourseCode = item.coursecode.replace(/([A-Za-z]+)(\d+)/, '$1 $2');
@@ -155,8 +210,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop: 15,
-    paddingHorizontal: -5,
+    paddingHorizontal: 5,
     backgroundColor: '#4b3ae0',
+  },
+  headerContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  logoImage: {
+    width: 70,
+    height: 70,
+    marginRight: 30,
+    marginLeft: 5,
+    resizeMode: 'contain',
+  },
+  textContainer: {
+    flex: 1,
   },
   header: {
     fontSize: 27,
@@ -198,17 +268,21 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 110,
   },
-  logoImage: {
-    width: 100,
-    height: 80,
-    alignSelf: 'left',
-    marginLeft: 7,
-  },
   courseText: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#4b3ae0',
     textAlign: 'center',
     paddingTop: 5,
+  },
+  searchBar: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    marginBottom: 16,
+    paddingHorizontal: 8,
+    backgroundColor: '#fff',
+    padding: 10,
   },
 });
