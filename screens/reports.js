@@ -94,7 +94,7 @@ const ReportScreen = () => {
       <TouchableOpacity
         style={styles.favoriteButton}
         onPress={() => navigation.navigate('FavoritesScreen', { favoriteTutors })}>
-        <Text style={styles.favoriteButtonText}>Go to Favorite Tutors</Text>
+        <Text style={styles.favoriteButtonText}>Favorite Tutors</Text>
       </TouchableOpacity>
     </View>
   );
