@@ -20,7 +20,7 @@ const SignIn = () => {
       <TextInput placeholder="Password" placeholderTextColor="#fff" style={styles.input} secureTextEntry />
       <Button title="Log In" onPress={handleSignIn} color="#fff" />
       <View style={styles.signUpContainer}>
-        <Text style={styles.text}>Don't have an account?</Text>
+        <Text style={styles.text}>Don&apos;t have an account?</Text>
         <TouchableOpacity onPress={handleSignUp}>
           <Text style={styles.signUpText}>Sign Up</Text>
         </TouchableOpacity>
