@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { View, Text, TextInput, Button, StyleSheet, Image, ScrollView } from 'react-native';
 
 const SignUp = ({ navigation }) => {
@@ -48,19 +49,25 @@ const SignUp = ({ navigation }) => {
   );
 };
 
+SignUp.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
+};
+
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#4b3ae0', // Adjust this to match your app's theme
+    backgroundColor: '#4b3ae0', 
   },
   logo: {
     width: 150,
     height: 150,
     marginBottom: 32,
-    resizeMode: 'contain', // Ensure the image is not cut off
+    resizeMode: 'contain', 
   },
   input: {
     width: '100%',
@@ -69,7 +76,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    color: '#fff', // Ensure the text color is white
+    color: '#fff', 
   },
 });
 

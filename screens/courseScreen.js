@@ -1,6 +1,7 @@
 // courseScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import PropTypes from 'prop-types';
 
 const CourseScreen = ({ route, navigation }) => {
   const { courseCode } = route.params; // Get the course code from navigation params
@@ -51,6 +52,17 @@ const CourseScreen = ({ route, navigation }) => {
       )}
     </View>
   );
+};
+
+CourseScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      courseCode: PropTypes.string.isRequired,
+    }).isRequired,
+  }).isRequired,
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
 };
 
 const TH_PURPLE = '#4b3ae0'; // TutorsHub purple
