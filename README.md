@@ -1,19 +1,8 @@
 # TUTOR HUB PROJECT 
 
-The Client repo is for holding files regarding the client for TutorsHub.[https://github.com/calvin-cs262-fall2024-teamH/Project].
+This is the client application for the TutorsHub project.
 
-PRE-REQUIREMENTS:
-- 
-- 
-- 
+The client side of the TutorsHub application provides a user interface for students and tutors to interact. The app allows users to view profiles, schedule sessions, and manage their accounts. The client communicates with the back-end services through API calls to display relevant data for the user.
 
-Challenges Faced:
-1. 
-2. 
-
-Answers to  Questions:
-1. 
-2.
-
-...
-new
+For more information on the back-end services, refer to the main project repository
+[Back to our Project repo])https://github.com/calvin-cs262-fall2024-teamH/Project)
