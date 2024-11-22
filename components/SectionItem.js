@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
+import PropTypes from 'prop-types'; // Import PropTypes
 
 const SectionItem = ({ name, courses, email, isFavorite, onToggleFavorite }) => {
   const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff');  // Favori durumunu kontrol et
@@ -18,6 +19,18 @@ const SectionItem = ({ name, courses, email, isFavorite, onToggleFavorite }) => 
   const handleMailPress = () => {
     // Navigate to the 'Chat' screen and pass the email
     navigation.navigate('FooterTabs', { screen: "Chats" });  // Pass email to Chat screen
+  };
+
+  SectionItem.propTypes = {
+    name: PropTypes.string.isRequired,            // Name should be a string
+    courses: PropTypes.arrayOf(                   // Courses should be an array of objects
+      PropTypes.shape({
+        courseCode: PropTypes.string.isRequired,  // Each course object should have a courseCode which is a string
+      })
+    ).isRequired,
+    email: PropTypes.string.isRequired,           // Email should be a string
+    isFavorite: PropTypes.bool.isRequired,        // isFavorite should be a boolean
+    onToggleFavorite: PropTypes.func.isRequired,  // onToggleFavorite should be a function
   };
 
   return (
