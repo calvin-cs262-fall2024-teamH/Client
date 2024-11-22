@@ -1,5 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, FlatList } from 'react-native';
+import PropTypes from 'prop-types';
+
 
 const FavoriteScreen = ({ route }) => {
   const { favoriteTutors } = route.params;  // Favori tutorlar, önceki ekrandan geliyor
@@ -20,6 +22,22 @@ const FavoriteScreen = ({ route }) => {
     </View>
   );
 };
+
+// PropTypes checking
+FavoriteScreen.propTypes = {
+  route: PropTypes.shape({
+    params: PropTypes.shape({
+      favoriteTutors: PropTypes.arrayOf(
+        PropTypes.shape({
+          name: PropTypes.string.isRequired, // Tutor names is string ? ? 
+          email: PropTypes.string.isRequired, // Tutor email is string ?  ? 
+        })
+      ).isRequired,
+    }).isRequired,
+  }).isRequired,
+};
+
+
 
 const styles = StyleSheet.create({
   container: {
