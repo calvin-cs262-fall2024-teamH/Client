@@ -1,6 +1,7 @@
 // home.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator, TextInput } from 'react-native';
+import PropTypes from 'prop-types';
 
 // const fetchWithRateLimit = async (url) => {
 //   try {
@@ -107,6 +108,13 @@ const fetchImageForCourse = async (courseCode, usedImageIds) => {
 const CourseCard = ({ name, image, onPress }) => {
   const imageSource = typeof image === 'string' ? { uri: image } : image;
 
+CourseCard.propTypes = {
+  name: PropTypes.string.isRequired,
+  image: PropTypes.string.isRequired,
+  onPress: PropTypes.string.isRequired,
+  navigation: PropTypes.string.isRequired,
+}
+
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
       <Image source={imageSource} style={styles.image} />
@@ -122,6 +130,10 @@ export default function HomeScreen({ navigation }) {
   const usedImageIds = new Set(); // Image ID cache for ensuring unique images
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredClasses, setFilteredClasses] = useState([]);
+
+HomeScreen.propTypes = {
+  navigation: PropTypes.string.isRequired,
+}
 
   // Fetch courses and images from the backend
   const getCourses = async () => {
@@ -286,3 +298,4 @@ const styles = StyleSheet.create({
     padding: 10,
   },
 });
+
