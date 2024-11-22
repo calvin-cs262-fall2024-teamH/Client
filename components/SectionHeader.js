@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types'; // Import PropTypes for ESLint 
 import { View, Text, StyleSheet, TextInput, Image } from 'react-native';
 
 const SectionHeader = ({ title, searchText, setSearchText }) => (
@@ -22,6 +23,13 @@ const SectionHeader = ({ title, searchText, setSearchText }) => (
     />
   </View>
 );
+
+// Add PropTypes validation for the props
+SectionHeader.propTypes = {
+  title: PropTypes.string.isRequired, // Title should be a string and is required
+  searchText: PropTypes.string.isRequired, // SearchText should be a string and is required
+  setSearchText: PropTypes.func.isRequired, // setSearchText should be a function and is required
+};
 
 const styles = StyleSheet.create({
   headerContainer: {
