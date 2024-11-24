@@ -3,37 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
 
-// const fetchWithRateLimit = async (url) => {
-//   try {
-//     const response = await fetch(url);
-
-//     // Log rate limit information
-//     const rateLimit = response.headers.get('X-RateLimit-Limit');
-//     const rateRemaining = response.headers.get('X-RateLimit-Remaining');
-//     const rateReset = response.headers.get('X-RateLimit-Reset');
-
-//     console.log(`Rate Limit: ${rateLimit}`);
-//     console.log(`Requests Remaining: ${rateRemaining}`);
-//     console.log(`Rate Limit Resets In: ${rateReset} seconds`);
-
-//     if (!response.ok) {
-//       throw new Error(`Request failed with status: ${response.status}`);
-//     }
-
-//     const data = await response.json();
-//     return data;
-
-//   } catch (error) {
-//     console.error('Error:', error);
-//   }
-// };
-
-// Usage example
-// const PIXABAY_API_URL = 'https://pixabay.com/api/?key=YOUR_API_KEY&q=flowers';
-
-// fetchWithRateLimit(PIXABAY_API_URL);
-// Pixabay API configuration
-
 const PIXABAY_API_KEY = '47068954-556e7ed04216c0e453375d551';
 const PIXABAY_BASE_URL = 'https://pixabay.com/api/';
 

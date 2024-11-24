@@ -1,12 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import axios from 'axios';
 
 const SignIn = () => {
   const navigation = useNavigation();
 
-  const handleSignIn = () => {
-    navigation.navigate('FooterTabs');
+  // Manage form inputs
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const handleSignIn = async () => {
+    console.log("Email: ", email);
+    console.log("Password: ", password);
+    try {
+      // Call your API for sign-in
+      const response = await axios.post('https://calvintutorshub.azurewebsites.net/auth/signin', {
+        email,
+        password,
+      });
+  
+      // Log the entire response to check its structure
+      console.log("Server response:", response.data);
+  
+      if (response.data.message === 'Login successful') {
+        navigation.navigate('FooterTabs');
+      } else {
+        setErrorMessage('Invalid credentials, please try again');
+      }
+    } catch (error) {
+      console.error('Sign-in error:', error);
+      setErrorMessage('An error occurred, please try again later');
+    }
   };
 
   const handleSignUp = () => {
@@ -16,8 +42,24 @@ const SignIn = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Image source={require('../assets/logoBlack.png')} style={styles.logo} />
-      <TextInput placeholder="Email" placeholderTextColor="#fff" style={styles.input} />
-      <TextInput placeholder="Password" placeholderTextColor="#fff" style={styles.input} secureTextEntry />
+      <TextInput
+        placeholder="Email"
+        placeholderTextColor="#fff"
+        style={styles.input}
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize="none"
+      />
+      <TextInput
+        placeholder="Password"
+        placeholderTextColor="#fff"
+        style={styles.input}
+        value={password}
+        onChangeText={setPassword}
+        secureTextEntry
+        autoCapitalize="none"
+      />
+      {errorMessage ? <Text style={styles.errorText}>{errorMessage}</Text> : null}
       <Button title="Log In" onPress={handleSignIn} color="#fff" />
       <View style={styles.signUpContainer}>
         <Text style={styles.text}>Don&apos;t have an account?</Text>
@@ -64,6 +106,10 @@ const styles = StyleSheet.create({
     color: '#fff',
     marginLeft: 4,
     textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: 'red',
+    marginTop: 10,
   },
 });
 
