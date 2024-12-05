@@ -6,9 +6,6 @@ import { db } from './firebaseconfig';
 import SignIn from '.././screens/signin';
 import SignUp from '.././screens/SignUp';
 
-
-
-
 export default function ChatScreen() {
   const [messages, setMessages] = useState([]);
 

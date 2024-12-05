@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import PropTypes from 'prop-types'; // Import PropTypes
 
-const SectionItem = ({ name, courses, email, isFavorite, onToggleFavorite }) => {
+const SectionItem = ({ name, courses, isFavorite, onToggleFavorite }) => {
   const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff');  // Favori durumunu kontrol et
   const navigation = useNavigation();
 
@@ -28,7 +28,6 @@ const SectionItem = ({ name, courses, email, isFavorite, onToggleFavorite }) => 
         courseCode: PropTypes.string.isRequired,  // Each course object should have a courseCode which is a string
       })
     ).isRequired,
-    email: PropTypes.string.isRequired,           // Email should be a string
     isFavorite: PropTypes.bool.isRequired,        // isFavorite should be a boolean
     onToggleFavorite: PropTypes.func.isRequired,  // onToggleFavorite should be a function
   };
