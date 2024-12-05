@@ -1,7 +1,8 @@
 // home.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, ActivityIndicator, TextInput } from 'react-native';
 import PropTypes from 'prop-types';
+import { UserContext } from '../UserContext';
 
 const PIXABAY_API_KEY = '47068954-556e7ed04216c0e453375d551';
 const PIXABAY_BASE_URL = 'https://pixabay.com/api/';
@@ -77,12 +78,11 @@ const fetchImageForCourse = async (courseCode, usedImageIds) => {
 const CourseCard = ({ name, image, onPress }) => {
   const imageSource = typeof image === 'string' ? { uri: image } : image;
 
-CourseCard.propTypes = {
-  name: PropTypes.string.isRequired,
-  image: PropTypes.string.isRequired,
-  onPress: PropTypes.string.isRequired,
-  navigation: PropTypes.string.isRequired,
-}
+  CourseCard.propTypes = {
+    name: PropTypes.string.isRequired,
+    image: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+    onPress: PropTypes.func.isRequired,
+  }
 
   return (
     <TouchableOpacity style={styles.card} onPress={onPress}>
@@ -99,10 +99,11 @@ export default function HomeScreen({ navigation }) {
   const usedImageIds = new Set(); // Image ID cache for ensuring unique images
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredClasses, setFilteredClasses] = useState([]);
+  const { user } = useContext(UserContext);
 
-HomeScreen.propTypes = {
-  navigation: PropTypes.string.isRequired,
-}
+  HomeScreen.propTypes = {
+    navigation: PropTypes.object.isRequired,
+  }
 
   // Fetch courses and images from the backend
   const getCourses = async () => {
@@ -146,12 +147,14 @@ HomeScreen.propTypes = {
     }
   };
 
+
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
         <View style={styles.textContainer}>
-          <Text style={styles.userHeader}>Welcome, Sam!</Text>
+          <Text style={styles.userHeader}>Welcome, {user.firstName}!</Text>
           <Text style={styles.header}>Offered Courses:</Text>
         </View>
       </View>

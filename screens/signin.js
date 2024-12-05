@@ -2,9 +2,12 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Image, TouchableOpacity, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { UserContext } from '../UserContext';
+import { useContext } from 'react';
 
 const SignIn = () => {
   const navigation = useNavigation();
+  const { setUser } = useContext(UserContext);
 
   // Manage form inputs
   const [email, setEmail] = useState('');
@@ -25,6 +28,12 @@ const SignIn = () => {
       console.log("Server response:", response.data);
   
       if (response.data.message === 'Login successful') {
+        setUser({
+          userID: response.data.userID,
+          firstName: response.data.firstName,
+          lastName: response.data.lastName,
+          email: response.data.email,
+        });
         navigation.navigate('FooterTabs');
       } else {
         setErrorMessage('Invalid credentials, please try again');
