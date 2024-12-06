@@ -10,14 +10,14 @@ const FavoriteScreen = ({ route }) => {
     <View style={styles.container}>
       <Text style={styles.header}>Favorite Tutors</Text>
       <FlatList
-        data={favoriteTutors}
+        data={favoriteTutors} // Display all favorite tutors
         renderItem={({ item }) => (
           <SectionItem
             name={item.name}
             courses={item.courses}
-            email={item.email}
+            email={item.email || 'Email not provided'} // Provide fallback if email is missing
             isFavorite={item.isFavorite}
-            hideFavoriteButton={true}
+            hideFavoriteButton={true} // Hide the favorite button
           />
         )}
         keyExtractor={(item) => item.name}
@@ -33,7 +33,7 @@ FavoriteScreen.propTypes = {
         PropTypes.shape({
           name: PropTypes.string.isRequired,
           courses: PropTypes.array.isRequired,
-          email: PropTypes.string.isRequired,
+          email: PropTypes.string, // Make email optional
           isFavorite: PropTypes.bool,
         })
       ).isRequired,
