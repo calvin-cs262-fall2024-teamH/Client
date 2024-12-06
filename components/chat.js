@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
 import { db } from './firebaseconfig';
-import SignIn from '.././screens/signin';
-import SignUp from '.././screens/SignUp';
+import { UserContext } from '../UserContext';
 
 export default function ChatScreen() {
+  const { user } = useContext(UserContext); // Get the logged-in user's data
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
@@ -25,25 +25,26 @@ export default function ChatScreen() {
   }, []);
 
   const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) => GiftedChat.append(previousMessages, messages));
-    const { _id, createdAt, text, user } = messages[0];
+    const { _id, createdAt, text, user: senderUser } = messages[0];
     addDoc(collection(db, 'messages'), {
       _id,
       createdAt,
       text,
-      user,
+      user: {
+        _id: user.userID, // Logged-in user's unique ID
+        name: senderUser.name || 'User', // Optional: Use their name
+      },
     });
-  }, []);
+  }, [user]);
 
   return (
     <View style={styles.container}>
-      <Image source={require('../assets/logoBlack.png')} style={styles.logoImage} />
       <GiftedChat
         messages={messages}
         onSend={(messages) => onSend(messages)}
         user={{
-          _id: 1,
-          name: 'User',
+          _id: user.userID, // Pass the logged-in user's ID
+          name: 'User', // Optional: Customize with user's name
         }}
       />
     </View>
@@ -53,12 +54,5 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  logoImage: {
-    width: 50,
-    height: 40,
-    position: 'absolute',
-    top: 10,
-    left: 10,
   },
 });
