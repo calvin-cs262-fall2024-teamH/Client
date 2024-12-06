@@ -8,8 +8,8 @@ const SectionItem = ({
   name,
   courses,
   isFavorite,
-  onToggleFavorite = () => {}, // Default function for toggling
-  hideFavoriteButton = false, // Default to show the favorite button
+  onToggleFavorite = () => {},
+  hideFavoriteButton = false,
 }) => {
   const [bgColor, setBgColor] = useState(isFavorite ? '#32CD32' : '#fff');
   const navigation = useNavigation();
@@ -18,8 +18,8 @@ const SectionItem = ({
     setBgColor(isFavorite ? '#32CD32' : '#fff');
   }, [isFavorite]);
 
-  const handleMailPress = () => {
-    navigation.navigate('FooterTabs', { screen: 'Chats' });
+  const handleCoursePress = (courseCode) => {
+    navigation.navigate('CourseScreen', { courseCode }); // Navigate to the CourseScreen with courseCode
   };
 
   return (
@@ -28,14 +28,20 @@ const SectionItem = ({
       <View style={styles.separator}></View>
       <View style={styles.coursesContainer}>
         <Text style={styles.coursesHeader}>Courses:</Text>
-        {courses.map((course, index) => (
-          <Text key={index} style={styles.courseText}>
-            {course.courseCode}
-          </Text>
-        ))}
+        <View style={styles.courseButtonsContainer}>
+          {courses.map((course, index) => (
+            <TouchableOpacity
+              key={index}
+              onPress={() => handleCoursePress(course.courseCode)}
+              style={styles.courseButton}
+            >
+              <Text style={styles.courseButtonText}>{course.courseCode}</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
       </View>
       <View style={styles.footerContainer}>
-        <TouchableOpacity onPress={handleMailPress} style={styles.iconButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('FooterTabs', { screen: 'Chats' })} style={styles.iconButton}>
           <Icon name="envelope" size={24} color="#fff" />
         </TouchableOpacity>
         {!hideFavoriteButton && (
@@ -94,10 +100,25 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontSize: 14,
     color: '#333',
+    marginBottom: 5,
   },
-  courseText: {
-    fontSize: 14,
-    color: '#555',
+  courseButtonsContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap', // Allow buttons to wrap to the next line
+    gap: 4, // Adjust space between buttons
+  },
+  courseButton: {
+    backgroundColor: '#4b3ae0',
+    paddingVertical: 6, // Smaller padding
+    paddingHorizontal: 10, // Smaller padding
+    borderRadius: 8,
+    marginBottom: 5,
+    marginRight: 5, // Reduce space between buttons
+  },
+  courseButtonText: {
+    fontSize: 12, // Smaller text
+    color: '#fff',
+    fontWeight: 'bold',
   },
   footerContainer: {
     flexDirection: 'row',
