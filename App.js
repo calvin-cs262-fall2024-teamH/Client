@@ -17,6 +17,7 @@ import SignUp from './screens/SignUp'; // Import the new screen
 import { UserProvider } from './UserContext';
 
 import FavoritesScreen from './screens/favoritescreen';
+import AccountSettingsScreen from './screens/accountSettings';
 
 
 const Tab = createBottomTabNavigator();
@@ -38,6 +39,7 @@ function App() {
           <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ title: 'Receipt' }} />
 
           <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
+          <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>

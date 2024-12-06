@@ -2,10 +2,13 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const OptionsScreen = () => {
-  const renderOptionButton = (title) => (
-    <TouchableOpacity style={styles.optionButton} onPress={() => { /* Placeholder action */ }}>
+  const navigation = useNavigation();
+
+  const renderOptionButton = (title, onPress) => (
+    <TouchableOpacity style={styles.optionButton} onPress={onPress}>
       <Text style={styles.optionText}>{title}</Text>
     </TouchableOpacity>
   );
@@ -13,12 +16,12 @@ const OptionsScreen = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.headerText}>Options</Text>
-      {renderOptionButton("Account Settings")}
-      {renderOptionButton("Notification Settings")}
-      {renderOptionButton("Theme Settings")}
-      {renderOptionButton("Privacy and Security")}
-      {renderOptionButton("Help and Support")}
-      {renderOptionButton("About")}
+      {renderOptionButton("Account Settings", () => navigation.navigate('AccountSettings'))}
+      {renderOptionButton("Notification Settings", () => {/* Placeholder action */ })}
+      {renderOptionButton("Theme Settings", () => {/* Placeholder action */ })}
+      {renderOptionButton("Privacy and Security", () => {/* Placeholder action */ })}
+      {renderOptionButton("Help and Support", () => {/* Placeholder action */ })}
+      {renderOptionButton("About", () => {/* Placeholder action */ })}
     </View>
   );
 };
