@@ -15,6 +15,8 @@ import ReceiptScreen from './components/Receipt'; // Receipt screen component
 import SignIn from './screens/signin'; // Import the renamed screen
 import SignUp from './screens/SignUp'; // Import the new screen
 import { UserProvider } from './UserContext';
+import HelpScreen from './screens/help';
+import Header from './shared/header';
 
 import FavoritesScreen from './screens/favoritescreen';
 
@@ -81,6 +83,7 @@ function FooterTabs() {
       <Tab.Screen name="Chats" component={ChatsScreen} />
       <Tab.Screen name="Tutors" component={ReportsScreen} />
       <Tab.Screen name="Options" component={OptionsScreen} />
+      <Tab.Screen name="Help" component={HelpScreen} />
     </Tab.Navigator>
   );
 }
