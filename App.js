@@ -12,43 +12,21 @@ import OptionsScreen from './screens/options';
 import ChatScreen from './components/chat'; // Chat screen component
 import CourseScreen from './screens/courseScreen'; // Dynamic course screen
 import ReceiptScreen from './components/Receipt'; // Receipt screen component
-import SignIn from './screens/signin'; // Import the renamed screen
-import SignUp from './screens/SignUp'; // Import the new screen
-import { UserProvider } from './UserContext';
-
+import SignIn from './screens/signin';
+import SignUp from './screens/SignUp';
 import FavoritesScreen from './screens/favoritescreen';
-
+import { UserProvider } from './UserContext';
+import HelpScreen from './screens/help';
+import Header from './shared/header';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
-
-function App() {
-  return (
-    <UserProvider>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="SignIn">
-          <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
-          <Stack.Screen name="FooterTabs" component={FooterTabs} options={{ headerShown: false }} />
-          <Stack.Screen name="SignUp" component={SignUp} />
-          <Stack.Screen name="CourseScreen" component={CourseScreen} />
-          {/* Chat screen */}
-          <Stack.Screen name="Chat" component={ChatScreen} options={{ title: 'Chat' }} />
-
-          {/* Receipt screen */}
-          <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ title: 'Receipt' }} />
-
-          <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </UserProvider>
-  );
-}
 
 function FooterTabs() {
   return (
     <Tab.Navigator
       initialRouteName="Home"
-      screenOptions={({ route }) => ({
+      screenOptions={({ route, navigation }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
 
@@ -75,6 +53,9 @@ function FooterTabs() {
 
           return <Icon name={iconName} size={size} color={color} />;
         },
+        headerRight: () => (
+          <Header navigation={navigation} />
+        ),
       })}
     >
       <Tab.Screen name="Home" component={HomeScreen} />
@@ -82,6 +63,29 @@ function FooterTabs() {
       <Tab.Screen name="Tutors" component={ReportsScreen} />
       <Tab.Screen name="Options" component={OptionsScreen} />
     </Tab.Navigator>
+  );
+}
+
+function App() {
+  return (
+    <UserProvider>
+      <NavigationContainer>
+        <Stack.Navigator initialRouteName="SignIn">
+          <Stack.Screen name="SignIn" component={SignIn} options={{ headerShown: false }} />
+          <Stack.Screen name="FooterTabs" component={FooterTabs} options={{ headerShown: false }} />
+          <Stack.Screen name="SignUp" component={SignUp} />
+          <Stack.Screen name="CourseScreen" component={CourseScreen} />
+          {/* Chat screen */}
+          <Stack.Screen name="Chat" component={ChatScreen} options={{ title: 'Chat' }} />
+
+          {/* Receipt screen */}
+          <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ title: 'Receipt' }} />
+
+          <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
+          <Stack.Screen name="Help" component={HelpScreen} options={{ headerBackTitle: 'Back' }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </UserProvider>
   );
 }
 
