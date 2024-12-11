@@ -12,13 +12,12 @@ import OptionsScreen from './screens/options';
 import ChatScreen from './components/chat'; // Chat screen component
 import CourseScreen from './screens/courseScreen'; // Dynamic course screen
 import ReceiptScreen from './components/Receipt'; // Receipt screen component
-import SignIn from './screens/signin'; // Import the renamed screen
-import SignUp from './screens/SignUp'; // Import the new screen
+import SignIn from './screens/signin';
+import SignUp from './screens/SignUp';
 import FavoritesScreen from './screens/favoritescreen';
-import AccountSettingsScreen from './screens/AccountSettingsScreen'; // Import the new screen
 import { UserProvider } from './UserContext';
 import HelpScreen from './screens/help';
-import Header from './shared/header'; // Import the Header component
+import Header from './shared/header';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -63,7 +62,6 @@ function FooterTabs() {
       <Tab.Screen name="Chats" component={ChatsScreen} />
       <Tab.Screen name="Tutors" component={ReportsScreen} />
       <Tab.Screen name="Options" component={OptionsScreen} />
-      <Tab.Screen name="Help" component={HelpScreen} />
     </Tab.Navigator>
   );
 }
@@ -84,7 +82,7 @@ function App() {
           <Stack.Screen name="Receipt" component={ReceiptScreen} options={{ title: 'Receipt' }} />
 
           <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
-          <Stack.Screen name="AccountSettings" component={AccountSettingsScreen} />
+          <Stack.Screen name="Help" component={HelpScreen} options={{ headerBackTitle: 'Back' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
