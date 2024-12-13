@@ -17,8 +17,10 @@ const OptionsScreen = ({ navigation }) => {
       {renderOptionButton("Notification Settings", () => {/* Placeholder action */})}
       {renderOptionButton("Theme Settings", () => {/* Placeholder action */})}
       {renderOptionButton("Privacy and Security", () => {/* Placeholder action */})}
-      {renderOptionButton("Help and Support", () => {/* Placeholder action */})}
-      {renderOptionButton("About", () => {/* Placeholder action */})}
+      {renderOptionButton("Apply to be a Tutor!", () => navigation.navigate('TutorInfo'))}
+
+      {renderOptionButton("About", () => navigation.navigate('About'))}
+
     </View>
   );
 };
