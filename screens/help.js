@@ -7,7 +7,7 @@ const HelpScreen = () => {
 
       <Text style={styles.sectionHeader}>Welcome to the App!</Text>
       <Text style={styles.paragraph}>
-        TutorsHub is an app for students to find tutors for classes that they are struggling with. Below is a guide on how to use the app.
+        TutorsHub is an app for students to find tutors for classes that they find challenging. Below is a guide on how to use the app.
       </Text>
 
       <Text style={styles.sectionHeader}>Home Screen</Text>
