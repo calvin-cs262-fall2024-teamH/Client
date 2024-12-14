@@ -12,6 +12,9 @@ import OptionsScreen from './screens/options';
 import ChatScreen from './components/chat'; // Chat screen component
 import CourseScreen from './screens/courseScreen'; // Dynamic course screen
 import ReceiptScreen from './components/Receipt'; // Receipt screen component
+import AccountScreen from './screens/accountScreen'; 
+import AboutScreen from './screens/aboutScreen'; 
+import TutorInfoScreen from './screens/tutorInfo';
 import SignIn from './screens/signin';
 import SignUp from './screens/SignUp';
 import FavoritesScreen from './screens/favoritescreen';
@@ -83,6 +86,9 @@ function App() {
 
           <Stack.Screen name="FavoritesScreen" component={FavoritesScreen} />
           <Stack.Screen name="Help" component={HelpScreen} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="AccountInfo" component={AccountScreen} options={{ title: 'Account Information' }}/>
+          <Stack.Screen name="About" component={AboutScreen} options={{ title: 'About TutorsHub' }} />
+          <Stack.Screen name="TutorInfo" component={TutorInfoScreen} options={{ title: 'Become a Tutor' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>
