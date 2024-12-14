@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, TextInput, Button, StyleSheet, Image, ScrollView } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, Image, ScrollView, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import axios from 'axios'; // Importing axios for HTTP requests
 
 const SignUp = ({ navigation }) => {
@@ -42,48 +42,43 @@ const SignUp = ({ navigation }) => {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image source={require('../assets/logoBlack.png')} style={styles.logo} />
-            
-      {/* First Name Input */}
-      <TextInput
-        placeholder="First Name"
-        value={form.firstName}
-        onChangeText={(text) => handleInputChange('firstName', text)}
-        placeholderTextColor="#fff"
-        style={styles.input}
-      />
-      
-      {/* Last Name Input */}
-      <TextInput
-        placeholder="Last Name"
-        value={form.lastName}
-        onChangeText={(text) => handleInputChange('lastName', text)}
-        placeholderTextColor="#fff"
-        style={styles.input}
-      />
-      
-      {/* Email Input */}
-      <TextInput
-        placeholder="Email"
-        value={form.email}
-        onChangeText={(text) => handleInputChange('email', text)}
-        placeholderTextColor="#fff"
-        style={styles.input}
-      />
-      
-      {/* Password Input */}
-      <TextInput
-        placeholder="Password"
-        value={form.password}
-        onChangeText={(text) => handleInputChange('password', text)}
-        placeholderTextColor="#fff"
-        style={styles.input}
-        secureTextEntry
-      />
-      
-      <Button title="Sign Up" onPress={handleSignUp} color="#fff" />
-    </ScrollView>
+    <KeyboardAvoidingView behavior="padding" style={styles.container}>
+      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+        <ScrollView contentContainerStyle={styles.scrollContainer}>
+          <Image source={require('../assets/logoBlack.png')} style={styles.logo} />
+          <TextInput
+            placeholder="First Name"
+            value={form.firstName}
+            onChangeText={(text) => handleInputChange('firstName', text)}
+            placeholderTextColor="#000"
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Last Name"
+            value={form.lastName}
+            onChangeText={(text) => handleInputChange('lastName', text)}
+            placeholderTextColor="#000"
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Email"
+            value={form.email}
+            onChangeText={(text) => handleInputChange('email', text)}
+            placeholderTextColor="#000"
+            style={styles.input}
+          />
+          <TextInput
+            placeholder="Password"
+            value={form.password}
+            onChangeText={(text) => handleInputChange('password', text)}
+            placeholderTextColor="#000"
+            style={styles.input}
+            secureTextEntry
+          />
+          <Button title="Sign Up" onPress={handleSignUp} color="#fff" />
+        </ScrollView>
+      </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -95,11 +90,14 @@ SignUp.propTypes = {
 
 const styles = StyleSheet.create({
   container: {
+    flex: 1,
+    backgroundColor: '#4b3ae0',
+  },
+  scrollContainer: {
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 16,
-    backgroundColor: '#4b3ae0', // Update background color as needed
   },
   logo: {
     width: 150,
@@ -114,7 +112,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 8,
-    color: '#fff', // Ensure text color is visible
+    backgroundColor: '#fff',
+    color: '#000',
   },
   errorText: {
     color: 'red',
