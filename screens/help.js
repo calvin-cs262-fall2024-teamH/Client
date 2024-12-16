@@ -64,6 +64,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 16,
     marginBottom: 8,
+    textAlign: 'center',
   },
   paragraph: {
     fontSize: 16,
