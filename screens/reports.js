@@ -1,3 +1,4 @@
+// reports.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -17,15 +18,18 @@ const ReportScreen = () => {
     fetch(API_TUTORS)
       .then((response) => response.json())
       .then(async (data) => {
+        //console.log(data);
         const tutorsWithCourses = await Promise.all(
           data.map(async (tutor) => {
             const tutorName = tutor.tutorname;
             const [firstName, lastName] = tutorName.split(' ');
+            const tutorID = tutor.tutorid;  // Corrected the variable name
             const courseUrl = `https://calvintutorshub.azurewebsites.net/tutors/${encodeURIComponent(firstName)}%20${encodeURIComponent(lastName)}`;
 
             const courseData = await fetch(courseUrl).then((response) => response.json());
 
             return {
+              ID: tutorID,  // Correct tutorID
               name: tutorName,
               courses: courseData.map((course) => ({
                 courseCode: course.coursecode,
@@ -79,11 +83,12 @@ const ReportScreen = () => {
               name={item.name}
               courses={item.courses}
               email={item.email}
+              ID={item.ID}  // Passing tutorID properly
               isFavorite={item.isFavorite}
               onToggleFavorite={() => handleToggleFavorite(item.name)}
             />
           )}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item) => item.ID ? item.ID.toString() : item.name}  // Fallback to name if tutorID is undefined
         />
       )}
       <TouchableOpacity
