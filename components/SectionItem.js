@@ -21,6 +21,13 @@ const SectionItem = ({
     setBgColor(isFavorite ? '#32CD32' : '#fff');
   }, [isFavorite]);
 
+
+  const handleMailPress = () => {
+    console.log(`Tıklanan Tutor: ${name}`); // Konsola tutor ismini yazdır
+
+    // ChatScreen'deki aynı tutor'un butonunu tetiklemek için tutorName parametresini gönder
+    navigation.navigate('Chats', { tutorName: name, triggerButton: true });
+
   useEffect(() => {
     // Fetch favorites count for the tutor
     const fetchFavoritesCount = async () => {
@@ -48,6 +55,7 @@ const SectionItem = ({
     } catch (error) {
       console.error('Error toggling favorite:', error);
     }
+
   };
 
   const handleCoursePress = (courseCode) => {
@@ -73,7 +81,7 @@ const SectionItem = ({
         </View>
       </View>
       <View style={styles.footerContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('FooterTabs', { screen: 'Chats' })} style={styles.iconButton}>
+        <TouchableOpacity onPress={handleMailPress} style={styles.iconButton}>
           <Icon name="envelope" size={24} color="#fff" />
         </TouchableOpacity>
         {!hideFavoriteButton && (
@@ -140,8 +148,7 @@ const styles = StyleSheet.create({
   },
   courseButtonsContainer: {
     flexDirection: 'row',
-    flexWrap: 'wrap', // Allow buttons to wrap to the next line
-    gap: 4, // Adjust space between buttons
+    flexWrap: 'wrap',
   },
   courseButton: {
     backgroundColor: '#4b3ae0',
@@ -149,10 +156,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     borderRadius: 8,
     marginBottom: 5,
-    marginRight: 5, // Reduce space between buttons
+    marginRight: 5,
   },
   courseButtonText: {
-    fontSize: 12, // Smaller text
+    fontSize: 12,
     color: '#fff',
     fontWeight: 'bold',
   },

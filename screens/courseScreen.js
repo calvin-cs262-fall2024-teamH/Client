@@ -1,21 +1,22 @@
-// courseScreen.js
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import PropTypes from 'prop-types';
 
 const CourseScreen = ({ route, navigation }) => {
   const { courseCode } = route.params; // Get the course code from navigation params
   const [tutors, setTutors] = useState([]);
   const [isLoading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTutors = async () => {
       try {
         const response = await fetch(`https://calvintutorshub.azurewebsites.net/coursecodes/${courseCode}`);
+        if (!response.ok) throw new Error(`Failed to fetch tutors for ${courseCode}`);
         const data = await response.json();
         setTutors(data);
-      } catch (error) {
-        console.error(error);
+      } catch (err) {
+        setError(err.message);
       } finally {
         setLoading(false);
       }
@@ -25,7 +26,10 @@ const CourseScreen = ({ route, navigation }) => {
   }, [courseCode]);
 
   const handleChatPress = (tutorName) => {
-    navigation.navigate("FooterTabs", { screen: "Chats" }); // Pass tutor name to Chat screen if needed
+    navigation.navigate("FooterTabs", {
+      screen: "Chats",
+      params: { tutorName, triggerButton: true },
+    });
   };
 
   const renderTutorCard = ({ item }) => (
@@ -41,7 +45,14 @@ const CourseScreen = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text style={styles.headerText}>Tutors Available for {courseCode}:</Text>
       {isLoading ? (
-        <Text>Loading...</Text>
+        <View style={styles.loadingContainer}>
+          <ActivityIndicator size="large" color="#fff" />
+          <Text style={styles.loadingText}>Loading Tutors...</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Error: {error}</Text>
+        </View>
       ) : (
         <FlatList
           data={tutors}
@@ -67,6 +78,7 @@ CourseScreen.propTypes = {
 
 const TH_PURPLE = '#4b3ae0'; // TutorsHub purple
 const GREEN = '#4CAF50'; // Green for chat button
+const ERROR_RED = '#FF6347'; // Red for error messages
 
 const styles = StyleSheet.create({
   container: {
@@ -74,11 +86,10 @@ const styles = StyleSheet.create({
     backgroundColor: TH_PURPLE, // Change background to TH purple
   },
   headerText: {
-    fontSize: 20,
+    fontSize: 22,
     fontWeight: 'bold',
     color: '#fff', // Change text color to white
-    marginTop: 20,
-    marginBottom: 10,
+    marginVertical: 20,
     textAlign: 'center',
   },
   card: {
@@ -106,6 +117,27 @@ const styles = StyleSheet.create({
   chatButtonText: {
     color: 'white', // Change button text color to white
     fontWeight: 'bold',
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  loadingText: {
+    marginTop: 10,
+    color: '#fff',
+    fontSize: 16,
+  },
+  errorContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    color: ERROR_RED,
+    textAlign: 'center',
   },
 });
 
