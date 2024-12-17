@@ -1,3 +1,4 @@
+// reports.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -17,15 +18,18 @@ const ReportScreen = () => {
     fetch(API_TUTORS)
       .then((response) => response.json())
       .then(async (data) => {
+        //console.log(data);
         const tutorsWithCourses = await Promise.all(
           data.map(async (tutor) => {
             const tutorName = tutor.tutorname;
             const [firstName, lastName] = tutorName.split(' ');
+            const tutorID = tutor.tutorid;  // Corrected the variable name
             const courseUrl = `https://calvintutorshub.azurewebsites.net/tutors/${encodeURIComponent(firstName)}%20${encodeURIComponent(lastName)}`;
 
             const courseData = await fetch(courseUrl).then((response) => response.json());
 
             return {
+              ID: tutorID,  // Correct tutorID
               name: tutorName,
               courses: courseData.map((course) => ({
                 courseCode: course.coursecode,
@@ -54,14 +58,71 @@ const ReportScreen = () => {
     }
   }, [searchText, tutorsList]);
 
-  const handleToggleFavorite = (tutorName) => {
-    setTutorsList((prevTutors) =>
-      prevTutors.map((tutor) =>
-        tutor.name === tutorName
-          ? { ...tutor, isFavorite: !tutor.isFavorite }
-          : tutor
-      )
-    );
+  const handleToggleFavorite = async (tutorID) => {
+    try {
+      const userID = 1; // Replace with actual user ID (e.g., from context or user state)
+
+      console.log('Toggling favorite for tutorID:', tutorID);
+
+      // Optimistically update the local state
+      setTutorsList((prevTutors) =>
+        prevTutors.map((tutor) =>
+          tutor.ID === tutorID
+            ? { ...tutor, isFavorite: !tutor.isFavorite } // Toggle the 'isFavorite' flag
+            : tutor
+        )
+      );
+
+      // Determine if this is a POST (add) or DELETE (remove) based on current favorite state
+      const method = tutorsList.find((tutor) => tutor.ID === tutorID).isFavorite
+        ? 'DELETE'
+        : 'POST'; 
+      const url = 'https://calvintutorshub.azurewebsites.net/fav';
+      const body = JSON.stringify({
+        userID: userID,
+        tutorID: tutorID,
+      });
+
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: body,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to ${method === 'POST' ? 'add' : 'remove'} tutor to/from favorites on the server.`);
+      }
+
+      const data = await response.json();
+      console.log('Server response:', data);
+
+      // Re-fetch the updated favorites count after adding/removing from favorites
+      const fetchResponse = await fetch(`https://calvintutorshub.azurewebsites.net/fav/fetch/${tutorID}`);
+      const countData = await fetchResponse.json();
+
+      // Update the favorites count in the local state
+      setTutorsList((prevTutors) =>
+        prevTutors.map((tutor) =>
+          tutor.ID === tutorID
+            ? { ...tutor, favoritesCount: countData.favoritesCount }
+            : tutor
+        )
+      );
+
+    } catch (error) {
+      console.error('Error toggling favorite status:', error.message);
+
+      // Optionally: Roll back state change on failure (reset the favorite state)
+      setTutorsList((prevTutors) =>
+        prevTutors.map((tutor) =>
+          tutor.ID === tutorID
+            ? { ...tutor, isFavorite: !tutor.isFavorite } // Revert optimistic state change
+            : tutor
+        )
+      );
+    }
   };
 
   const favoriteTutors = tutorsList.filter((tutor) => tutor.isFavorite);
@@ -79,11 +140,12 @@ const ReportScreen = () => {
               name={item.name}
               courses={item.courses}
               email={item.email}
+              ID={item.ID}  // Passing tutorID properly
               isFavorite={item.isFavorite}
-              onToggleFavorite={() => handleToggleFavorite(item.name)}
+              onToggleFavorite={() => handleToggleFavorite(item.ID)}
             />
           )}
-          keyExtractor={(item) => item.name}
+          keyExtractor={(item) => item.ID ? item.ID.toString() : item.name}  // Fallback to name if tutorID is undefined
         />
       )}
       <TouchableOpacity

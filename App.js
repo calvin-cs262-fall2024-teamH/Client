@@ -15,6 +15,7 @@ import ReceiptScreen from './components/Receipt'; // Receipt screen component
 import AccountScreen from './screens/accountScreen'; 
 import AboutScreen from './screens/aboutScreen'; 
 import TutorInfoScreen from './screens/tutorInfo';
+import PrivacyAndSecurityScreen from './screens/privacyScreen';
 import SignIn from './screens/signin';
 import SignUp from './screens/SignUp';
 import FavoritesScreen from './screens/favoritescreen';
@@ -89,6 +90,7 @@ function App() {
           <Stack.Screen name="AccountInfo" component={AccountScreen} options={{ title: 'Account Information' }}/>
           <Stack.Screen name="About" component={AboutScreen} options={{ title: 'About TutorsHub' }} />
           <Stack.Screen name="TutorInfo" component={TutorInfoScreen} options={{ title: 'Become a Tutor' }} />
+          <Stack.Screen name="PrivacyAndSecurity" component={PrivacyAndSecurityScreen} options={{ title: 'Privacy and Security' }}/>
         </Stack.Navigator>
       </NavigationContainer>
     </UserProvider>

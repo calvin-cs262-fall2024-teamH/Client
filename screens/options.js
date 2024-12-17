@@ -14,13 +14,9 @@ const OptionsScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.headerText}>Options</Text>
       {renderOptionButton("Account Info", () => navigation.navigate('AccountInfo'))}
-      {renderOptionButton("Notification Settings", () => {/* Placeholder action */})}
-      {renderOptionButton("Theme Settings", () => {/* Placeholder action */})}
-      {renderOptionButton("Privacy and Security", () => {/* Placeholder action */})}
+      {renderOptionButton("Privacy and Security", () => navigation.navigate('PrivacyAndSecurity'))}
       {renderOptionButton("Apply to be a Tutor!", () => navigation.navigate('TutorInfo'))}
-
       {renderOptionButton("About", () => navigation.navigate('About'))}
-
     </View>
   );
 };
@@ -29,25 +25,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#4b3ae0',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
   },
   optionButton: {
     padding: 15,
     borderRadius: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#fff',
     marginBottom: 10,
     alignItems: 'center',
   },
   optionText: {
     fontSize: 18,
-    color: '#555',
+    color: '#4b3ae0',
   },
 });
 
