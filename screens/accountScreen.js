@@ -42,30 +42,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#4b3ae0',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
   },
   infoRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
+    borderBottomColor: '#fff',
   },
   label: {
     fontSize: 18,
-    color: '#555',
+    color: '#fff',
     fontWeight: 'bold',
   },
   value: {
     fontSize: 18,
-    color: '#333',
+    color: '#fff',
   },
 });
 

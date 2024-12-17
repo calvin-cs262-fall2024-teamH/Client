@@ -36,26 +36,26 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#4b3ae0',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
   },
   subHeaderText: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 10,
-    color: '#555',
+    color: '#fff',
   },
   bodyText: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#666',
+    color: '#fff',
     marginBottom: 10,
   },
 });

@@ -18,7 +18,7 @@ const TutorInfoScreen = () => {
       <Text style={styles.infoText}>
         To become a tutor, contact us with your information and the courses you wish to tutor for. Email us at:
       </Text>
-      <Text style={styles.contactEmail}>John@calvin.edu</Text>
+      <Text style={styles.contactEmail}>apply@tutorshub.com</Text>
 
       <Text style={styles.sectionHeader}>Requirements</Text>
       <Text style={styles.listItem}>- Must be a registered college student.</Text>
@@ -35,43 +35,43 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: '#4b3ae0',
   },
   headerText: {
     fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
-    color: '#333',
+    color: '#fff',
   },
   sectionHeader: {
     fontSize: 20,
     fontWeight: 'bold',
     marginTop: 20,
     marginBottom: 10,
-    color: '#555',
+    color: '#fff',
   },
   infoText: {
     fontSize: 16,
     marginBottom: 10,
-    color: '#555',
+    color: '#fff',
     lineHeight: 22,
   },
   listItem: {
     fontSize: 16,
     marginBottom: 5,
-    color: '#555',
+    color: '#fff',
   },
   contactEmail: {
     fontSize: 16,
-    color: '#007BFF',
+    color: '#00bbFF',
     marginVertical: 10,
   },
   footerText: {
     marginTop: 20,
     fontSize: 16,
     textAlign: 'center',
-    color: '#555',
+    color: '#fff',
   },
 });
 
