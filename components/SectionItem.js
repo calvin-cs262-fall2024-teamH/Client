@@ -36,6 +36,8 @@ const SectionItem = ({
     fetchFavoritesCount();
   }, [ID]);
 
+  
+
   const handleToggleFavorite = async () => {
     try {
       // Call the parent-provided handler to toggle favorite
@@ -49,6 +51,10 @@ const SectionItem = ({
       console.error('Error toggling favorite:', error);
     }
   };
+
+  const handleMailPress = () => {
+    navigation.navigate('Chats', { tutorName: name, triggerButton: true });
+  }
 
   const handleCoursePress = (courseCode) => {
     navigation.navigate('CourseScreen', { courseCode }); // Navigate to the CourseScreen with courseCode
@@ -73,7 +79,7 @@ const SectionItem = ({
         </View>
       </View>
       <View style={styles.footerContainer}>
-        <TouchableOpacity onPress={() => navigation.navigate('FooterTabs', { screen: 'Chats' })} style={styles.iconButton}>
+        <TouchableOpacity onPress={handleMailPress} style={styles.iconButton}>
           <Icon name="envelope" size={24} color="#fff" />
         </TouchableOpacity>
         {!hideFavoriteButton && (
@@ -99,7 +105,7 @@ SectionItem.propTypes = {
       courseCode: PropTypes.string.isRequired,
     })
   ).isRequired,
-  ID: PropTypes.number.isRequired, // Add tutorID prop
+  ID: PropTypes.number, // Add tutorID prop
   isFavorite: PropTypes.bool.isRequired,
   onToggleFavorite: PropTypes.func,
   hideFavoriteButton: PropTypes.bool,
