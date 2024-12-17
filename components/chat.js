@@ -1,65 +1,35 @@
 import React, { useState, useEffect, useCallback, useContext } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { collection, addDoc, onSnapshot, query, orderBy } from 'firebase/firestore';
-import { useRoute } from '@react-navigation/native';
 import { db } from './firebaseconfig';
 import { UserContext } from '../UserContext';
 
 export default function ChatScreen() {
   const { user } = useContext(UserContext); // Logged-in user
-  const route = useRoute(); // Data from SectionItem
-  const { tutorName, triggerButton } = route.params || {}; // Params from SectionItem
   const [messages, setMessages] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null); // Selected tutor
-  const [searchText, setSearchText] = useState(''); // Search bar state
-  const tutors = [
-    { tutorname: "John Doe", userid: 2, tutorid: 1 },
-    { tutorname: "Jane Smith", userid: 3, tutorid: 2 },
-    { tutorname: "Michael Johnson", userid: 4, tutorid: 3 },
-    { tutorname: "Emily Davis", userid: 5, tutorid: 4 },
-    { tutorname: "William Brown", userid: 6, tutorid: 5 },
-    { tutorname: "Olivia Wilson", userid: 7, tutorid: 6 },
-    { tutorname: "James Taylor", userid: 8, tutorid: 7 },
-    { tutorname: "Sophia Miller", userid: 9, tutorid: 8 },
-    { tutorname: "David Martinez", userid: 10, tutorid: 9 },
-    { tutorname: "Isabella Hernandez", userid: 11, tutorid: 10 },
-    { tutorname: "Lucas Garcia", userid: 12, tutorid: 11 },
-    { tutorname: "Ava Rodriguez", userid: 13, tutorid: 12 },
-    { tutorname: "Ethan Lee", userid: 14, tutorid: 13 },
-    { tutorname: "Mia Perez", userid: 15, tutorid: 14 },
-    { tutorname: "Alexander Martinez", userid: 16, tutorid: 15 },
-    { tutorname: "Charlotte Gonzalez", userid: 17, tutorid: 16 },
-    { tutorname: "Benjamin Wilson", userid: 18, tutorid: 17 },
-    { tutorname: "Amelia Anderson", userid: 19, tutorid: 18 },
-    { tutorname: "Henry Thomas", userid: 20, tutorid: 19 },
-    { tutorname: "Lily Jackson", userid: 21, tutorid: 20 },
-  ];
+  const [selectedUser, setSelectedUser] = useState(null); // Selected user
+  const userList = Array.from({ length: 50 }, (_, i) => `user id ${i + 1}`); // First 50 users
 
-  const filteredTutors = tutors.filter((tutor) =>
-    tutor.tutorname.toLowerCase().includes(searchText.toLowerCase())
-  );
-
-  useEffect(() => {
-    if (tutorName && triggerButton) {
-      const tutor = tutors.find((t) => t.tutorname === tutorName);
-
-      if (selectedUser && selectedUser.tutorname === tutorName) {
-        return;
-      }
-
-      setSelectedUser(tutor);
-    }
-  }, [tutorName, triggerButton]);
-
+  // Generate a unique collection name for two users
   const getCollectionName = (user1, user2) => {
+    // Ensure both IDs are strings in the same format
     const stringUser1 = typeof user1 === "number" ? `user id ${user1}` : user1;
     const stringUser2 = typeof user2 === "number" ? `user id ${user2}` : user2;
 
+    if (!stringUser1 || !stringUser2) {
+      console.error("Invalid user IDs:", { stringUser1, stringUser2 }); // Log unexpected values
+      return null; // Prevent further execution if IDs are invalid
+    }
+
     try {
-      const numUser1 = parseInt(stringUser1.replace("user id ", ""), 10);
-      const numUser2 = parseInt(stringUser2.replace("user id ", ""), 10);
-      const sortedIds = [numUser1, numUser2].sort((a, b) => a - b);
+      const numUser1 = parseInt(stringUser1.replace("user id ", ""), 10); // Convert to number
+      const numUser2 = parseInt(stringUser2.replace("user id ", ""), 10); // Convert to number
+      if (isNaN(numUser1) || isNaN(numUser2)) {
+        console.error("User IDs must be valid numbers after parsing:", { numUser1, numUser2 });
+        return null;
+      }
+      const sortedIds = [numUser1, numUser2].sort((a, b) => a - b); // Sort numerically
       return `messages_user${sortedIds[0]}_to_user${sortedIds[1]}`;
     } catch (error) {
       console.error("Error while generating collection name:", error);
@@ -70,11 +40,11 @@ export default function ChatScreen() {
   useEffect(() => {
     if (!selectedUser) return;
 
-    const collectionName = getCollectionName(user.userID, selectedUser.userid);
-    if (!collectionName) return;
+    const collectionName = getCollectionName(user.userID, selectedUser);
+    if (!collectionName) return; // Stop execution if the collection name is invalid
 
     const q = query(
-      collection(db, collectionName),
+      collection(db, collectionName), // Unique collection for these two users
       orderBy('createdAt', 'desc')
     );
 
@@ -94,8 +64,8 @@ export default function ChatScreen() {
   const onSend = useCallback(
     (messages = []) => {
       const { _id, createdAt, text, user: senderUser } = messages[0];
-      const collectionName = getCollectionName(user.userID, selectedUser.userid);
-      if (!collectionName) return;
+      const collectionName = getCollectionName(user.userID, selectedUser);
+      if (!collectionName) return; // Stop execution if the collection name is invalid
 
       addDoc(collection(db, collectionName), {
         _id,
@@ -110,27 +80,23 @@ export default function ChatScreen() {
     [selectedUser, user]
   );
 
+  const handleUserSelect = (userId) => {
+    setSelectedUser(userId); // Set the selected user
+  };
+
   if (!selectedUser) {
+    // User list screen with scrollable list
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Connect with Your Tutor</Text>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search tutors..."
-          placeholderTextColor="#7f8c8d"
-          value={searchText}
-          onChangeText={setSearchText}
-        />
+        <Text style={styles.title}>User List</Text>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {filteredTutors.map((tutor, index) => (
+          {userList.map((userId, index) => (
             <TouchableOpacity
               key={index}
-              style={styles.card}
-              onPress={() => setSelectedUser(tutor)}
+              style={styles.userButton}
+              onPress={() => handleUserSelect(userId)}
             >
-              <Text style={styles.cardTitle}>{tutor.tutorname}</Text>
-              <Text style={styles.cardSubtitle}>🎓 Expert in Personalized Learning</Text>
-              <Text style={styles.cardAction}>👋 Tap to Connect</Text>
+              <Text style={styles.userText}>{userId}</Text>
             </TouchableOpacity>
           ))}
         </ScrollView>
@@ -139,12 +105,13 @@ export default function ChatScreen() {
   }
 
   return (
+    // Chat screen
     <View style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => setSelectedUser(null)} style={styles.backButton}>
           <Text style={styles.backButtonText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>{selectedUser.tutorname}</Text>
+        <Text style={styles.headerTitle}>{selectedUser}</Text>
       </View>
       <GiftedChat
         messages={messages}
@@ -161,81 +128,51 @@ export default function ChatScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f3f7fa',
-    padding: 10,
+    backgroundColor: '#fff',
   },
   title: {
-    fontSize: 24,
+    fontSize: 20,
     fontWeight: 'bold',
+    marginBottom: 16,
     textAlign: 'center',
-    marginBottom: 10,
-    color: '#4b3ae0',
-  },
-  searchBar: {
-    height: 40,
-    borderColor: '#4b3ae0',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    color: '#333',
-    marginBottom: 20,
   },
   scrollContainer: {
-    flexDirection: 'column',
+    paddingBottom: 16, // Add padding to ensure the last item is not clipped
+  },
+  userButton: {
+    padding: 12,
+    marginVertical: 8,
+    backgroundColor: '#007BFF',
+    borderRadius: 6,
     alignItems: 'center',
   },
-  card: {
-    width: '90%',
-    backgroundColor: '#ffffff',
-    borderRadius: 10,
-    padding: 20,
-    marginVertical: 10,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 5,
-    alignItems: 'center',
-    borderWidth: 2,
-    borderColor: '#4b3ae0',
-  },
-  cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    color: '#4b3ae0',
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#7f8c8d',
-    marginTop: 5,
-  },
-  cardAction: {
-    fontSize: 14,
-    color: '#4b3ae0',
-    marginTop: 10,
-    fontWeight: 'bold',
+  userText: {
+    color: '#fff',
+    fontSize: 16,
   },
   header: {
-    height: 70,
-    backgroundColor: '#4b3ae0',
+    height: 60,
+    backgroundColor: '#f4f4f4',
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   backButton: {
     padding: 10,
   },
   backButtonText: {
     fontSize: 16,
-    color: '#fff',
+    color: '#007BFF',
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff',
+    color: '#333',
     textAlign: 'center',
     flex: 1,
-    marginLeft: -40,
+    marginLeft: -40, // Centers the title properly
   },
 });
