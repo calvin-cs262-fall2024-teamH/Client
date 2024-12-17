@@ -99,7 +99,7 @@ SectionItem.propTypes = {
       courseCode: PropTypes.string.isRequired,
     })
   ).isRequired,
-  ID: PropTypes.number.isRequired, // Add tutorID prop
+  ID: PropTypes.number, // Add tutorID prop
   isFavorite: PropTypes.bool.isRequired,
   onToggleFavorite: PropTypes.func,
   hideFavoriteButton: PropTypes.bool,
